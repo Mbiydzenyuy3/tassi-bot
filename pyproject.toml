@@ -1,0 +1,136 @@
+[project]
+name = "tassi-bot"
+version = "0.1.0"
+description = "WhatsApp tax-compliance assistant for Cameroonian RSI SMEs"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "Tassi Team" }]
+keywords = ["whatsapp", "tax", "cameroon", "sme", "fastapi"]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Framework :: FastAPI",
+    "Private :: Do Not Upload",
+]
+dependencies = [
+    # Web framework
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    # Config (env-driven per SRS NFR-MAINT-1)
+    "pydantic-settings>=2.6",
+    # Database
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "psycopg[binary]>=3.2",
+    # Cache / session / idempotency (SDD §5)
+    "redis>=5.2",
+    # HTTP client — Campay API calls (SDD §7) + WhatsApp Cloud API
+    # httpx2 is the successor to httpx, required by Starlette TestClient
+    "httpx2>=2.4.0",
+    # In-process scheduler for daily reminders (SDD §8, no Celery)
+    "apscheduler>=3.10",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "ruff>=0.8",
+    "black>=24.10",
+    "mypy>=1.13",
+    "types-redis>=4.6",
+    "pre-commit>=4.0",
+    "commitizen>=3.29",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tassi"]
+
+# ── Ruff (linter) ────────────────────────────────────────────────────────────
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "S",   # bandit (security)
+    "B",   # bugbear
+    "C4",  # comprehensions
+    "T20", # no print statements
+    "RUF", # ruff-specific
+    "ANN", # annotations (enforce type hints)
+    "PT",  # pytest style
+]
+ignore = [
+    "ANN204", # __init__ return type not required
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "ANN"] # assert and missing annotations OK in tests
+
+# ── Black (formatter) ─────────────────────────────────────────────────────────
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+# ── mypy (type checker) ───────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+exclude = ["tests/", "migrations/"]
+
+[[tool.mypy.overrides]]
+module = "apscheduler.*"
+ignore_missing_imports = true
+
+# ── pytest ───────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = [
+    "--cov=tassi",
+    "--cov-branch",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=99.98",
+    "-v",
+]
+
+# ── coverage ─────────────────────────────────────────────────────────────────
+[tool.coverage.run]
+branch = true
+source = ["tassi"]
+
+[tool.coverage.report]
+fail_under = 99.98
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@(abc\\.)?abstractmethod",
+]
+
+# ── commitizen ────────────────────────────────────────────────────────────────
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_files = [
+    "pyproject.toml:^version",
+    "tassi/__init__.py:__version__",
+]
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_file = "CHANGELOG.md"

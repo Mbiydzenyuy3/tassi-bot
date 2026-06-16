@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Python dependencies (uv/pyproject.toml)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      dev-tools:
+        patterns:
+          - "pytest*"
+          - "ruff"
+          - "black"
+          - "mypy*"
+          - "types-*"
+          - "pre-commit"
+          - "commitizen"
+      production-deps:
+        patterns:
+          - "fastapi"
+          - "uvicorn*"
+          - "sqlalchemy"
+          - "alembic"
+          - "pydantic*"
+          - "redis"
+          - "httpx"
+          - "apscheduler"
+          - "psycopg*"
+    ignore:
+      # Pin major versions manually — breaking changes require explicit review
+      - dependency-name: "fastapi"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "sqlalchemy"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+
+  # Docker base images
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"

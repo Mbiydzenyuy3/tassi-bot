@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tassi
+      POSTGRES_PASSWORD: tassi
+      POSTGRES_DB: tassi
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tassi -d tassi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    # Override the production CMD with --reload for local development hot-reloading.
+    # The Dockerfile CMD (no --reload) is used in production.
+    command: uvicorn tassi.main:app --host 0.0.0.0 --port 8000 --reload --log-level debug
+    environment:
+      DATABASE_URL: postgresql+psycopg://tassi:tassi@postgres:5432/tassi
+      REDIS_URL: redis://redis:6379/0
+      DEBUG: "true"
+      ENVIRONMENT: development
+    env_file:
+      - path: .env
+        required: false  # OK to omit during CI; explicit env vars above take precedence
+    volumes:
+      - ./tassi:/app/tassi  # mount source for hot-reload; removed in production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -1,0 +1,40 @@
+name: Feature Request
+description: Propose a new feature or improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening a request, check if the feature is already in scope (SRS v2.0) or
+        explicitly deferred (SRS §8). Deferred items need a stated trigger to be reconsidered.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the user need or business problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: SRS scope
+      options:
+        - "In scope (v2.0)"
+        - "Explicitly deferred (SRS §8) — trigger condition met"
+        - "Net new — not in current SRS"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

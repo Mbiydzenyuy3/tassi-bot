@@ -1,0 +1,63 @@
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+wheels/
+sdist/
+.eggs/
+
+# ── Virtual environments ─────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── uv ───────────────────────────────────────────────────────────────────────
+# uv.lock is committed (pinned reproducible installs); cache is at ~/.cache/uv
+
+# ── Testing & coverage ───────────────────────────────────────────────────────
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+junit.xml
+
+# ── Type checkers ────────────────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ── Linters ──────────────────────────────────────────────────────────────────
+.ruff_cache/
+
+# ── Environment & secrets ─────────────────────────────────────────────────────
+# .env is gitignored; .env.example (committed) shows all required vars
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ── Claude Code settings (machine-specific; Karpathy guidelines are tracked) ─
+.claude/settings.json
+.claude/settings.local.json
+
+# ── IDE / editor ─────────────────────────────────────────────────────────────
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+!.vscode/extensions.json
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+docker-volumes/
