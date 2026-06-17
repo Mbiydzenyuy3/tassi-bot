@@ -62,6 +62,7 @@ Thumbs.db
 # ── Docker ────────────────────────────────────────────────────────────────────
 docker-volumes/
 # ── Docs ────────────────────────────────────────────────────────────────────
-docs/PERSONAS.md
-docs/SDD.md
-docs/SRS.md
+PERSONAS.md
+SDD.md
+SRS.md
+APP.md
