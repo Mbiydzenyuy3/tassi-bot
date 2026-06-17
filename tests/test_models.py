@@ -45,6 +45,16 @@ class TestUser:
         assert col.default is not None
         assert col.default.arg == "fr"
 
+    def test_language_column_accepts_pcm(self) -> None:
+        # "pcm" (3 chars) is the code for Cameroonian Pidgin English — column must be String(3)
+        col = User.__table__.c.language
+        assert col.type.length >= 3  # type: ignore[union-attr]
+
+    def test_language_column_valid_values(self) -> None:
+        for lang in ("fr", "en", "pcm"):
+            user = User(whatsapp_id="+237600000099", language=lang)
+            assert user.language == lang
+
     def test_annual_revenue_band_defaults_to_none(self) -> None:
         user = _make_user()
         assert user.annual_revenue_band is None

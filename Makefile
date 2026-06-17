@@ -9,6 +9,9 @@ install-hooks: ## Install pre-commit hooks (pre-commit + commit-msg stages)
 
 setup: install install-hooks ## Full one-shot dev environment setup
 
+dev: ## Run the app locally with hot-reload (requires Postgres + Redis running)
+	uv run uvicorn tassi.main:app --reload --port 8000
+
 # ── Code quality ───────────────────────────────────────────────────────────────
 lint: ## Run Ruff linter
 	uv run ruff check .
@@ -91,7 +94,7 @@ help: ## Show this help message
 	@awk 'BEGIN {FS = ":.*##"; printf "\n\033[1mUsage:\033[0m\n  make \033[36m<target>\033[0m\n\n\033[1mTargets:\033[0m\n"} \
 	/^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
-.PHONY: install install-hooks setup lint lint-fix fmt fmt-check type-check check fix \
+.PHONY: install install-hooks setup dev lint lint-fix fmt fmt-check type-check check fix \
         test test-fast test-watch coverage-html migrate migrate-down migration \
         migrate-history docker-build docker-up docker-down docker-logs docker-shell \
         clean update-hooks bump-version changelog help

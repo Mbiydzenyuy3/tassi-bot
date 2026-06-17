@@ -61,9 +61,5 @@ Thumbs.db
 
 # ── Docker ────────────────────────────────────────────────────────────────────
 docker-volumes/
-# ── Docs ────────────────────────────────────────────────────────────────────
-PERSONAS.md
-SDD.md
-SRS.md
-APP.md
-TASKS.md
+# ── Docs (local planning docs — not committed to GitHub) ──────────────────
+docs/

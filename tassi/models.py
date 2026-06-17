@@ -23,8 +23,8 @@ class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     # MSISDN in E.164 format: +237XXXXXXXXX
     whatsapp_id: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
-    # "fr" or "en" — set at onboarding (FR-CHAT-4)
-    language: Mapped[str] = mapped_column(String(2), nullable=False, default="fr")
+    # "fr" | "en" | "pcm" (Cameroonian Pidgin English) — set at onboarding (FR-CHAT-4)
+    language: Mapped[str] = mapped_column(String(3), nullable=False, default="fr")
     # UNDER_10M | RSI_10_50M | OVER_50M | UNKNOWN — set at onboarding (FR-TAX-5)
     annual_revenue_band: Mapped[str | None] = mapped_column(String(16), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
