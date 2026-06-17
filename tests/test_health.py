@@ -11,6 +11,7 @@ Coverage goals:
 from http import HTTPStatus
 
 from fastapi.testclient import TestClient
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
 import tassi
 from tassi.main import create_app
@@ -62,6 +63,20 @@ class TestAppFactory:
         app = create_app(settings=prod)
         assert app.docs_url is None
         assert app.redoc_url is None
+
+
+class TestLifespan:
+    def test_engine_on_app_state_after_startup(self, client: TestClient) -> None:
+        assert client.app.state.engine is not None  # type: ignore[union-attr]
+
+    def test_engine_is_async_engine(self, client: TestClient) -> None:
+        assert isinstance(client.app.state.engine, AsyncEngine)  # type: ignore[union-attr]
+
+    def test_db_factory_on_app_state_after_startup(self, client: TestClient) -> None:
+        assert client.app.state.db_factory is not None  # type: ignore[union-attr]
+
+    def test_db_factory_is_async_sessionmaker(self, client: TestClient) -> None:
+        assert isinstance(client.app.state.db_factory, async_sessionmaker)  # type: ignore[union-attr]
 
 
 class TestVersion:
