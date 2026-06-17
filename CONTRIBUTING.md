@@ -29,22 +29,46 @@ main          — production-ready, protected; direct commits blocked
 
 ## Development Setup
 
+### Install dependencies
+
 ```bash
-# Prerequisites: Python 3.12, uv, Docker
+# Prerequisites: Python 3.12, uv (https://docs.astral.sh/uv/), Docker
 git clone git@github.com:Mbiydzenyuy3/tassi-bot.git
 cd tassi-bot
 cp .env.example .env   # fill in real values
-make setup             # uv sync --all-groups + pre-commit install
+
+# Install all dependencies (app + dev + test groups) and pre-commit hooks
+make setup
+# Equivalent to: uv sync --all-groups && pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+# Install only dev/test dependencies without running hook setup:
+# uv sync --group dev
 ```
 
-Start the backing services (Postgres + Redis):
+### Run the app
+
+Start the backing services and the app:
 
 ```bash
-make docker-up         # starts postgres + redis + app in background
-# OR, for the app with direct terminal output:
+# Start Postgres + Redis in the background
 docker compose up postgres redis -d
-uv run uvicorn tassi.main:app --reload --port 8000
+
+# Apply pending migrations (first run, and after any new migration file)
+make migrate
+
+# Run the app with hot-reload
+make dev
+# Equivalent to: uv run uvicorn tassi.main:app --reload --port 8000
 ```
+
+Or run the full stack (app + DB + Redis) together in containers:
+
+```bash
+make docker-up         # all services in background
+make docker-logs       # follow app container logs
+```
+
+Health check: `curl http://localhost:8000/health`
 
 ---
 

@@ -70,7 +70,8 @@ docker compose up postgres redis -d
 make migrate
 
 # Run the app with hot-reload
-uv run uvicorn tassi.main:app --reload --port 8000
+make dev
+# Equivalent to: uv run uvicorn tassi.main:app --reload --port 8000
 ```
 
 Or run the full stack (app + DB + Redis) in containers:
