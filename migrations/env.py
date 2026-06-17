@@ -4,6 +4,8 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from tassi.models import Base
+
 alembic_config = context.config
 
 if alembic_config.config_file_name is not None:
@@ -13,12 +15,12 @@ if alembic_config.config_file_name is not None:
 # credentials. All other config (script_location etc.) still comes from alembic.ini.
 database_url = os.environ.get("DATABASE_URL")
 if database_url:
-    alembic_config.set_main_option("sqlalchemy.url", database_url)
+    # Alembic uses a sync engine. Strip the +psycopg_async suffix if present;
+    # plain postgresql+psycopg works for both sync (migrations) and async (app).
+    sync_url = database_url.replace("+psycopg_async", "+psycopg")
+    alembic_config.set_main_option("sqlalchemy.url", sync_url)
 
-# When models are added (feature branches), import their Base metadata here:
-#   from tassi.models import Base
-#   target_metadata = Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
