@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="180" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#052e16"/>
+      <stop offset="100%" stop-color="#166534"/>
+    </linearGradient>
+    <radialGradient id="sh" cx="30%" cy="22%" r="55%" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.11)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#g)"/>
+  <rect width="180" height="180" rx="40" fill="url(#sh)"/>
+  <!-- T crossbar -->
+  <rect x="31.5" y="45" width="117" height="27" rx="6.75" fill="white"/>
+  <!-- T stem -->
+  <rect x="69.75" y="45" width="40.5" height="90" rx="6.75" fill="white"/>
+  <!-- Gold totals line -->
+  <rect x="31.5" y="148.5" width="117" height="13.5" rx="6.75" fill="#eab308"/>
+</svg>
