@@ -3,11 +3,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Request, Response
 from redis.asyncio import ConnectionPool, Redis
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from tassi.chat import handle_message
 from tassi.config import Settings
 from tassi.db import build_engine, build_session_factory
-from tassi.deps import get_cfg, get_redis
+from tassi.deps import get_cfg, get_db, get_redis
+from tassi.payments import process_payment_callback
 from tassi.security import verify_meta_signature
 from tassi.session import is_duplicate_message, is_rate_limited
 
@@ -82,8 +84,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             for change in entry.get("changes", []):
                 value = change.get("value", {})
                 for message in value.get("messages", []):
-                    msisdn = message.get("from", "")
-                    message_id = message.get("id", "")
+                    msisdn = str(message.get("from", ""))
+                    message_id = str(message.get("id", ""))
+                    message_text = str(
+                        message.get("text", {}).get("body", "")
+                        if isinstance(message.get("text"), dict)
+                        else message.get("text", "")
+                    )
 
                     if await is_rate_limited(redis, msisdn, cfg.rate_limit_per_60s):
                         continue
@@ -91,8 +98,51 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     if await is_duplicate_message(redis, message_id):
                         continue
 
-                    background_tasks.add_task(handle_message, message, cfg)
+                    background_tasks.add_task(
+                        handle_message,
+                        msisdn,
+                        message_text,
+                        message_id,
+                        request.app.state.db_factory,
+                        redis,
+                        cfg,
+                    )
 
+        return {"status": "ok"}
+
+    @app.post("/campay/webhook", tags=["payments"], status_code=200)
+    async def campay_callback(
+        request: Request,
+        background_tasks: BackgroundTasks,
+        cfg: Settings = Depends(get_cfg),
+        db: AsyncSession = Depends(get_db),
+    ) -> dict[str, str]:
+        """
+        Receive Campay payment status callback (FR-PAY-3).
+        Verifies app_token in the payload before processing.
+        """
+        try:
+            payload = await request.json()
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail="invalid json") from exc
+
+        if payload.get("app_token") != cfg.campay_application_token:
+            raise HTTPException(status_code=403, detail="invalid app_token")
+
+        campay_reference = str(payload.get("reference", ""))
+        raw_status = str(payload.get("status", "")).upper()
+        status = "SUCCESS" if raw_status == "SUCCESSFUL" else raw_status
+
+        if not campay_reference:
+            raise HTTPException(status_code=400, detail="missing reference")
+
+        background_tasks.add_task(
+            process_payment_callback,
+            campay_reference,
+            status,
+            db,
+            cfg,
+        )
         return {"status": "ok"}
 
     return app

@@ -72,9 +72,13 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
             "🎉 Paiement confirmé ! Vous êtes maintenant abonné à *Tassi Plus*.\n"
             "Envoyez *HISTORY* pour voir votre historique."
         ),
+<<<<<<< HEAD
         "payment_failed": (
             "❌ Paiement échoué. Envoyez *SUBSCRIBE* pour réessayer."
         ),
+=======
+        "payment_failed": ("❌ Paiement échoué. Envoyez *SUBSCRIBE* pour réessayer."),
+>>>>>>> 09b70537950398dd5c8604b6ab0ca5aaa37e578f
         "payment_pending": (
             "⏳ Votre paiement est encore en cours. Réessayez *STATUS* dans quelques minutes."
         ),
@@ -148,13 +152,18 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
             "⏳ Payment in progress. Check your phone for the USSD prompt.\n"
             "Send *STATUS* to check the payment status."
         ),
+<<<<<<< HEAD
         "subscribe_error": (
             "❌ Could not initiate payment right now. Please try again later."
         ),
+=======
+        "subscribe_error": ("❌ Could not initiate payment right now. Please try again later."),
+>>>>>>> 09b70537950398dd5c8604b6ab0ca5aaa37e578f
         "payment_confirmed": (
             "🎉 Payment confirmed! You are now a *Tassi Plus* subscriber.\n"
             "Send *HISTORY* to view your filing history."
         ),
+<<<<<<< HEAD
         "payment_failed": (
             "❌ Payment failed. Send *SUBSCRIBE* to try again."
         ),
@@ -170,6 +179,16 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
         "history_not_plus": (
             "📊 Filing history is for *Tassi Plus* subscribers.\n"
             "Send *SUBSCRIBE* to join."
+=======
+        "payment_failed": ("❌ Payment failed. Send *SUBSCRIBE* to try again."),
+        "payment_pending": (
+            "⏳ Your payment is still processing. Try *STATUS* again in a few minutes."
+        ),
+        "payment_just_initiated": ("⏳ Payment just started. Wait a moment then send *STATUS*."),
+        "no_pending_payment": ("No pending payment found. Send *SUBSCRIBE* to subscribe."),
+        "history_not_plus": (
+            "📊 Filing history is for *Tassi Plus* subscribers.\n" "Send *SUBSCRIBE* to join."
+>>>>>>> 09b70537950398dd5c8604b6ab0ca5aaa37e578f
         ),
         "history_empty": "No calculations recorded for this account.",
         "history_result": "{history_text}",
@@ -200,7 +219,11 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
             "We no fit help you for your tax now. " "Abeg find one good accountant wey go help you."
         ),
         "ask_revenue": (
+<<<<<<< HEAD
             " Good! How much money you make dis month?\n" "_(E.g. 2 350 000 frs, 2.350.000)_"
+=======
+            "✅ Good! How much money you make dis month?\n" "_(E.g. 2 350 000 frs, 2.350.000)_"
+>>>>>>> 09b70537950398dd5c8604b6ab0ca5aaa37e578f
         ),
         "zero_return_guidance": (
             "*Déclaration Néant*\n\n"
@@ -226,16 +249,23 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
         ),
         "already_subscribed": "✅ You don already subscribe for Tassi Plus.",
         "subscribe_initiated": (
+<<<<<<< HEAD
             "⏳ Payment don start. Check your phone for USSD prompt.\n"
             "Send *STATUS* to check am."
         ),
         "subscribe_error": (
             "❌ We no fit start payment now. Abeg try again later."
         ),
+=======
+            "⏳ Payment don start. Check your phone for USSD prompt.\n" "Send *STATUS* to check am."
+        ),
+        "subscribe_error": ("❌ We no fit start payment now. Abeg try again later."),
+>>>>>>> 09b70537950398dd5c8604b6ab0ca5aaa37e578f
         "payment_confirmed": (
             "🎉 Payment don confirm! You don join *Tassi Plus*.\n"
             "Send *HISTORY* to see your history."
         ),
+<<<<<<< HEAD
         "payment_failed": (
             "❌ Payment fail. Send *SUBSCRIBE* to try again."
         ),
@@ -251,6 +281,16 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
         "history_not_plus": (
             "📊 History na for *Tassi Plus* subscribers only.\n"
             "Send *SUBSCRIBE* to join."
+=======
+        "payment_failed": ("❌ Payment fail. Send *SUBSCRIBE* to try again."),
+        "payment_pending": (
+            "⏳ Your payment still dey process. Try *STATUS* again for few minutes."
+        ),
+        "payment_just_initiated": ("⏳ Payment just start. Wait small then send *STATUS*."),
+        "no_pending_payment": ("No pending payment dey. Send *SUBSCRIBE* to join."),
+        "history_not_plus": (
+            "📊 History na for *Tassi Plus* subscribers only.\n" "Send *SUBSCRIBE* to join."
+>>>>>>> 09b70537950398dd5c8604b6ab0ca5aaa37e578f
         ),
         "history_empty": "No calculation dey for dis account yet.",
         "history_result": "{history_text}",
