@@ -10,6 +10,6 @@ def verify_meta_signature(payload: bytes, signature_header: str, app_secret: str
     """
     if not signature_header.startswith("sha256="):
         return False
-    received = signature_header[len("sha256="):]
+    received = signature_header[len("sha256=") :]
     computed = hmac.new(app_secret.encode(), payload, hashlib.sha256).hexdigest()
     return hmac.compare_digest(computed, received)

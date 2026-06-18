@@ -6,9 +6,9 @@ from redis.exceptions import RedisError
 
 _log = logging.getLogger(__name__)
 
-_SESSION_TTL = 7200   # 2 hours — FR-CHAT-2
-_DEDUP_TTL = 86400    # 24 hours — long enough to cover any Meta retry window
-_RATE_TTL = 60        # 60-second window — FR-DATA-3
+_SESSION_TTL = 7200  # 2 hours — FR-CHAT-2
+_DEDUP_TTL = 86400  # 24 hours — long enough to cover any Meta retry window
+_RATE_TTL = 60  # 60-second window — FR-DATA-3
 
 
 async def get_session(redis: Redis, msisdn: str) -> dict[str, object]:  # type: ignore[type-arg]

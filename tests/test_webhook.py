@@ -25,8 +25,12 @@ def _webhook_payload(message_id: str = "wamid.test001") -> dict:
                     {
                         "value": {
                             "messages": [
-                                {"id": message_id, "from": "237600000000", "type": "text",
-                                 "text": {"body": "2350000"}}
+                                {
+                                    "id": message_id,
+                                    "from": "237600000000",
+                                    "type": "text",
+                                    "text": {"body": "2350000"},
+                                }
                             ]
                         }
                     }
