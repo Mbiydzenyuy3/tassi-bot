@@ -70,15 +70,17 @@
 | 3.4 | `tassi/session.py` — Redis session, dedup, rate limit | `feat/webhook` | `[x]` | 5 async functions, full RedisError degraded-mode coverage. Real Redis tests. 14 tests. |
 | 3.5 | `tassi/deps.py` — FastAPI Redis + DB dependencies | `feat/webhook` | `[x]` | `get_cfg`, `get_redis`, `get_db` — used via `Depends()` in routes. 3 tests. |
 
+**Milestone 3 total:** 176 tests · 100% branch coverage · Ruff + Black + mypy strict clean. Merged to `development` via PR #14.
+
 ---
 
 ## Milestone 4 — Conversation Flow
 
-**Goal:** Full onboarding → revenue input → calculation reply. Both languages. PERSONAS T1–T6 all pass.
+**Goal:** Full onboarding → revenue input → calculation reply. Trilingual (fr/en/pcm). PERSONAS T1–T6 all pass.
 
 | Task | Description | Branch | Status | Notes |
 |---|---|---|---|---|
-| 4.1 | `tassi/templates.py` — all bot message text (fr + en) | `feat/conversation` | `[ ]` | |
+| 4.1 | `tassi/templates.py` — all bot message text (fr + en + pcm) | `feat/conversation` | `[ ]` | |
 | 4.2 | `tassi/chat.py` — state machine + per-message language detection (FR-CHAT-7) | `feat/conversation` | `[ ]` | Uses langdetect; falls back to users.language for numeric input |
 | 4.3 | `tassi/meta.py` — `send_typing_indicator()` + `send_text_message()` (FR-CHAT-8) | `feat/conversation` | `[ ]` | Typing indicator is best-effort, never blocks reply |
 | 4.4 | `tests/test_conversation.py` — integration tests T1–T6 + language-switch + typing indicator | `feat/conversation` | `[ ]` | |
