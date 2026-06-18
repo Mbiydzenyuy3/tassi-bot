@@ -99,12 +99,18 @@
 
 | Task | Description | Branch | Status | Notes |
 |---|---|---|---|---|
-| 5.1 | `tassi/campay.py` — Campay API client | `feat/payments` | `[ ]` | |
-| 5.2 | SUBSCRIBE command handler | `feat/payments` | `[ ]` | |
-| 5.3 | Campay webhook callback (`POST /campay/webhook`) + `tassi/payments.py` | `feat/payments` | `[ ]` | |
-| 5.4 | STATUS command handler | `feat/payments` | `[ ]` | |
-| 5.5 | HISTORY command handler | `feat/payments` | `[ ]` | |
-| 5.6 | `tests/test_payments.py` — integration tests T7–T10 | `feat/payments` | `[ ]` | |
+| 5.1 | `tassi/campay.py` — Campay API client | `feat/payments` | `[x]` | `_get_token` (JWT), `initiate_ussd_push` (POST /collect/), `get_transaction_status` (GET /transaction/{ref}/). SUCCESSFUL→SUCCESS normalisation. 8 tests in `tests/test_campay.py` (mocked httpx, no real Campay calls). |
+| 5.2 | SUBSCRIBE/ABONNEMENT command + AWAITING_OPERATOR state | `feat/payments` | `[x]` | `_handle_subscribe` checks `is_plus` via `selectinload`; if not subscribed, sends `ask_operator` and sets state. `_handle_awaiting_operator` accepts 1/MTN or 2/Orange, creates `PaymentTransaction`, fires USSD push, sends `subscribe_initiated`. Campay failure sends `subscribe_error`. |
+| 5.3 | `POST /campay/webhook` + `tassi/payments.py` | `feat/payments` | `[x]` | Endpoint verifies `app_token` in body (403 if mismatch). Normalises SUCCESSFUL→SUCCESS. Dispatches `process_payment_callback` as background task. `process_payment_callback` is fully idempotent: unknown reference → warning + no-op; already-processed → silent skip; SUCCESS → marks tx, creates 30-day `Subscription`, links `subscription_id`, notifies user; FAILED → marks tx, notifies user. Send errors suppressed. |
+| 5.4 | STATUS/STATUT command | `feat/payments` | `[x]` | Queries latest PENDING `PaymentTransaction` for user. No pending → `no_pending_payment`. Age < 2 min → `payment_just_initiated`. Null reference → `payment_pending`. Otherwise polls Campay; SUCCESS/FAILED triggers `process_payment_callback`; still PENDING → `payment_pending`. |
+| 5.5 | HISTORY/HISTORIQUE command | `feat/payments` | `[x]` | Plus-only (checks `is_plus` via `selectinload`). Non-Plus → `history_not_plus`. Plus with no calcs → `history_empty`. Plus with calcs → last 12 non-zero calculations formatted as period: amount list. |
+| 5.6 | Full test coverage for Milestone 5 | `feat/payments` | `[x]` | `tests/test_campay.py` (8 tests), `tests/test_payments.py` (6 tests for `process_payment_callback`), `tests/test_webhook.py` +5 tests for `/campay/webhook` (dependency override pattern for `get_db`), `tests/test_conversation.py` +26 tests for all new command handlers and AWAITING_OPERATOR state. |
+
+**Alembic:** `migrations/versions/0002_campay_reference_unique.py` — partial UNIQUE index on `payment_transactions.campay_reference WHERE campay_reference IS NOT NULL` (prevents double-processing of duplicate Campay callbacks; NULL rows allowed for transactions awaiting a reference).
+
+**Templates:** 12 new trilingual message keys added to `tassi/templates.py` (fr/en/pcm): `ask_operator`, `already_subscribed`, `subscribe_initiated`, `subscribe_error`, `payment_confirmed`, `payment_failed`, `payment_pending`, `payment_just_initiated`, `no_pending_payment`, `history_not_plus`, `history_empty`, `history_result`.
+
+**Milestone 5 total:** 253 tests · 100% branch coverage · Ruff + Black + mypy strict clean. Committed on `feat/payments`. Awaiting push and PR to `development`.
 
 ---
 
