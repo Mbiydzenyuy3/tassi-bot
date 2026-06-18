@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     plus_price_xaf: int = Field(500)  # placeholder until G3 resolves
     feature_plus_reminders: bool = Field(False)  # off until G3 resolves
 
+    # ── Rate limiting (FR-DATA-3) ─────────────────────────────────────────────
+    rate_limit_per_60s: int = Field(10)  # max messages per MSISDN per 60-second window
+
     # ── Application ───────────────────────────────────────────────────────────
     debug: bool = Field(False)
     environment: str = Field("production")

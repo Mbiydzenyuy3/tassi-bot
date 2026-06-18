@@ -73,10 +73,11 @@ select = [
 ]
 ignore = [
     "ANN204", # __init__ return type not required
+    "B008",   # Depends() in function defaults — standard FastAPI pattern, not a bug
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "ANN"] # assert and missing annotations OK in tests
+"tests/**" = ["S101", "S105", "S107", "ANN"] # assert, hardcoded test secrets, and missing annotations OK in tests
 
 # ── Black (formatter) ─────────────────────────────────────────────────────────
 [tool.black]
