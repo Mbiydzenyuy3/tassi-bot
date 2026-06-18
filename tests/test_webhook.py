@@ -1,14 +1,22 @@
 """
 Tests for webhook endpoints — GET /webhook (verification) and POST /webhook (ingestion).
 Task 3.1 and 3.3 from TASKS.md Milestone 3.
+/campay/webhook tests in TestCampayWebhook (Milestone 5 Task 5.3).
 """
 
 import hashlib
 import hmac
 import json
+from collections.abc import AsyncGenerator
 from unittest.mock import AsyncMock, patch
 
+import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from tassi.config import Settings
+from tassi.deps import get_db
+from tassi.main import create_app
 
 
 def _sign(payload: bytes, secret: str) -> str:
@@ -134,3 +142,80 @@ class TestReceiveWebhook:
                 resp = self._post(client, _webhook_payload())
         assert resp.status_code == 200
         mock_handle.assert_not_called()
+
+
+@pytest.fixture
+def campay_client(settings: Settings) -> TestClient:
+    """TestClient with get_db overridden so no real DB session is needed."""
+
+    async def _mock_db() -> AsyncGenerator[AsyncMock, None]:
+        yield AsyncMock(spec=AsyncSession)
+
+    app = create_app(settings=settings)
+    app.dependency_overrides[get_db] = _mock_db
+    with TestClient(app) as tc:
+        yield tc
+
+
+class TestCampayWebhook:
+    _APP_TOKEN = "test-token"
+
+    def _post(self, client: TestClient, body: dict) -> object:
+        return client.post(
+            "/campay/webhook",
+            content=json.dumps(body).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+
+    def test_valid_callback_returns_ok(self, campay_client: TestClient) -> None:
+        with patch("tassi.main.process_payment_callback", new_callable=AsyncMock):
+            resp = self._post(
+                campay_client,
+                {
+                    "app_token": self._APP_TOKEN,
+                    "reference": "CPY-001",
+                    "status": "SUCCESSFUL",
+                },
+            )
+        assert resp.status_code == 200
+        assert resp.json() == {"status": "ok"}
+
+    def test_invalid_app_token_returns_403(self, campay_client: TestClient) -> None:
+        resp = self._post(
+            campay_client,
+            {
+                "app_token": "wrong-token",
+                "reference": "CPY-001",
+                "status": "SUCCESSFUL",
+            },
+        )
+        assert resp.status_code == 403
+
+    def test_missing_reference_returns_400(self, campay_client: TestClient) -> None:
+        with patch("tassi.main.process_payment_callback", new_callable=AsyncMock):
+            resp = self._post(
+                campay_client,
+                {"app_token": self._APP_TOKEN, "status": "SUCCESSFUL"},
+            )
+        assert resp.status_code == 400
+
+    def test_invalid_json_returns_400(self, campay_client: TestClient) -> None:
+        resp = campay_client.post(
+            "/campay/webhook",
+            content=b"not-json",
+            headers={"Content-Type": "application/json"},
+        )
+        assert resp.status_code == 400
+
+    def test_successful_status_normalized_before_dispatch(self, campay_client: TestClient) -> None:
+        with patch("tassi.main.process_payment_callback", new_callable=AsyncMock) as mock_cb:
+            self._post(
+                campay_client,
+                {
+                    "app_token": self._APP_TOKEN,
+                    "reference": "CPY-002",
+                    "status": "SUCCESSFUL",
+                },
+            )
+        # Background tasks run synchronously inside TestClient context
+        assert mock_cb.call_args[0][1] == "SUCCESS"
