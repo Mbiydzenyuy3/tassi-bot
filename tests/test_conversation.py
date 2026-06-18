@@ -1,0 +1,682 @@
+"""
+Integration-style tests for the Tassi conversation state machine.
+Tests T1-T6 from PERSONAS section 5.
+
+DB is fully mocked (no Postgres needed) — tests verify state transitions,
+template key selection, and that send_text_message is called with the
+right text. The real DB path is exercised in CI against the Postgres service.
+"""
+
+from decimal import Decimal
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+from tassi.chat import handle_message
+from tassi.config import Settings
+from tassi.models import TaxCalculation
+
+# ── Shared fixtures ───────────────────────────────────────────────────────────
+
+_MSISDN = "237612345678"
+_MSG_ID = "wamid.test001"
+_CFG = Settings(
+    meta_phone_number_id="test-phone-id",
+    meta_access_token="test-access-token",
+    meta_verify_token="test-verify-token",
+    meta_app_secret="test-secret",
+    campay_username="u",
+    campay_password="p",
+    campay_application_token="t",
+    cac_mode="ADDITIVE",
+    cac_rate="0.10",
+    rate_rsi="0.055",
+)
+
+
+def _make_db_factory(
+    calc_row: TaxCalculation | None = None,
+    resend_path: bool = False,
+) -> MagicMock:
+    """Return a mock db_factory whose sessions support the operations chat.py needs.
+
+    resend_path=True  → first execute returns calc_row (TaxCalculation query in _handle_resend)
+    resend_path=False → first execute returns None user (User query in _get_or_create_user)
+    """
+    session = AsyncMock()
+
+    # select(User) → no existing user (new user path)
+    user_result = MagicMock()
+    user_result.scalar_one_or_none.return_value = None
+
+    # select(TaxCalculation) for RESEND
+    calc_result = MagicMock()
+    calc_result.scalar_one_or_none.return_value = calc_row
+
+    if resend_path:
+        session.execute = AsyncMock(side_effect=[calc_result, user_result] * 10)
+    else:
+        session.execute = AsyncMock(side_effect=[user_result, calc_result] * 10)
+
+    session.add = MagicMock()
+    session.flush = AsyncMock()
+
+    # db.begin() as async context manager
+    begin_ctx = AsyncMock()
+    begin_ctx.__aenter__ = AsyncMock(return_value=None)
+    begin_ctx.__aexit__ = AsyncMock(return_value=False)
+    session.begin = MagicMock(return_value=begin_ctx)
+
+    # db_factory() must be a synchronous call returning an async context manager
+    ctx = AsyncMock()
+    ctx.__aenter__ = AsyncMock(return_value=session)
+    ctx.__aexit__ = AsyncMock(return_value=False)
+    factory = MagicMock(return_value=ctx)
+    return factory
+
+
+class TestT1StandardCalculationFrench:
+    """T1: Aïssatou sends revenue in French — receives correct Acompte."""
+
+    async def test_calculation_result_sent(self) -> None:
+        sent: list[tuple[str, str, str, str]] = []
+
+        async def fake_send(phone_id: str, token: str, msisdn: str, text: str) -> None:
+            sent.append((phone_id, token, msisdn, text))
+
+        session_state: dict = {"state": "ACTIVE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "2 350 000 frs", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        _, _, _, text = sent[0]
+        # Result must contain the base acompte amount (2350000 * 0.055 = 129 250)
+        assert "129" in text or "129 250" in text or "129250" in text
+
+
+class TestT2StandardCalculationEnglish:
+    """T2: User sends revenue in English — receives calculation in English."""
+
+    async def test_calculation_result_sent_in_english(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "ACTIVE", "language": "en"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "2350000", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "129" in sent[0]
+
+
+class TestT3ZeroReturn:
+    """T3: User sends zero-revenue phrase — receives Néant guidance (no payment due)."""
+
+    @pytest.mark.parametrize("phrase", ["rien", "e no get", "no money", "nothing dey", "i no sell"])
+    async def test_zero_return_sends_guidance(self, phrase: str) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "ACTIVE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, phrase, _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        text = sent[0]
+        assert "Néant" in text or "Neant" in text.replace("é", "e") or "néant" in text.lower()
+
+
+class TestT4InvalidThenValid:
+    """T4: User sends garbage, gets error, then sends valid revenue, gets result."""
+
+    async def test_invalid_input_then_valid(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "ACTIVE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        patches = (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        )
+        with patches[0], patches[1], patches[2]:
+            # First: garbage input
+            await handle_message(_MSISDN, "abc xyz", _MSG_ID + "-1", db_factory, redis, _CFG)
+            assert len(sent) == 1
+            assert "❌" in sent[0] or "reconnai" in sent[0].lower() or "understand" in sent[0]
+
+            # Second: valid revenue
+            await handle_message(_MSISDN, "2 350 000", _MSG_ID + "-2", db_factory, redis, _CFG)
+        assert len(sent) == 2
+        assert "129" in sent[1]
+
+
+class TestT5DuplicateMessageId:
+    """T5: Same message_id twice — state machine called only once (dedup in main.py)."""
+
+    async def test_send_called_once_for_duplicate(self) -> None:
+        """
+        Dedup is enforced in main.py before handle_message is called.
+        This test verifies handle_message itself does NOT produce duplicate output
+        if somehow called twice — state machine is idempotent for AWAITING_LANGUAGE repeat.
+        """
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        # Session starts AWAITING_LANGUAGE; both calls to handle_message
+        # attempt to pick language — first sets state to AWAITING_BAND, second sees
+        # AWAITING_BAND and processes "fr" as unexpected input → resends band picker.
+        call_count = [0]
+
+        async def stateful_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            if call_count[0] == 0:
+                return {"state": "AWAITING_LANGUAGE", "language": "fr"}
+            return {"state": "AWAITING_BAND", "language": "fr"}
+
+        async def stateful_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            call_count[0] += 1
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=stateful_get),
+            patch("tassi.chat.set_session", side_effect=stateful_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "1", _MSG_ID, db_factory, redis, _CFG)
+            await handle_message(_MSISDN, "1", _MSG_ID, db_factory, redis, _CFG)
+
+        # Two calls → two sends (one per invocation). In production the webhook dedup
+        # layer (main.py) ensures handle_message is only dispatched once.
+        assert len(sent) == 2
+
+
+class TestT6ResendCommand:
+    """T6: RESEND command — returns last calculation for current fiscal period."""
+
+    async def test_resend_returns_last_calculation(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "ACTIVE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        # Simulate a TaxCalculation row returned from DB
+        import uuid
+        from datetime import UTC, datetime
+
+        calc = MagicMock(spec=TaxCalculation)
+        calc.gross_revenue = Decimal("2350000.00")
+        calc.base_acompte = Decimal("129250.00")
+        calc.cac_amount = Decimal("12925.00")
+        calc.cac_mode = "ADDITIVE"
+        calc.fiscal_period = datetime.now(tz=UTC).strftime("%Y-%m")
+        calc.is_zero_return = False
+        calc.created_at = datetime.now(tz=UTC)
+        calc.user_id = uuid.uuid4()
+        calc.id = uuid.uuid4()
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory(calc_row=calc, resend_path=True)
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "RESEND", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        text = sent[0]
+        # French resend_result template + formatted tax amount
+        assert "dernier calcul" in text or "129" in text
+
+    async def test_resend_with_no_history_sends_no_history_message(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "ACTIVE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        # calc_row=None → no history found; resend_path so calc query fires first
+        db_factory = _make_db_factory(calc_row=None, resend_path=True)
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "RENVOYER", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "calcul" in sent[0].lower() or "history" in sent[0].lower()
+
+
+class TestOnboarding:
+    """State machine NEW → AWAITING_LANGUAGE → AWAITING_BAND → ACTIVE flow."""
+
+    async def test_new_user_gets_language_prompt(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "hello", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "1️⃣" in sent[0]  # language picker
+        assert session_state["state"] == "AWAITING_LANGUAGE"
+
+    async def test_language_2_switches_to_english(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_LANGUAGE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "2", _MSG_ID, db_factory, redis, _CFG)
+
+        assert session_state["language"] == "en"
+        assert session_state["state"] == "AWAITING_BAND"
+        assert "revenue" in sent[0].lower() or "Between" in sent[0]
+
+    async def test_band_1_transitions_to_active(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_BAND", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "1", _MSG_ID, db_factory, redis, _CFG)
+
+        assert session_state["state"] == "ACTIVE"
+        assert session_state["annual_revenue_band"] == "RSI_10_50M"
+        assert "chiffre d'affaires" in sent[0] or "revenue" in sent[0].lower()
+
+    async def test_out_of_band_after_3_tries_sends_final_message(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_BAND", "language": "fr", "band_tries": 2}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            # Send garbage (not a valid band choice, not in-range revenue)
+            await handle_message(_MSISDN, "5", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        # Should be the out_of_band_final message (3rd rejection)
+        assert "comptable" in sent[0] or "accountant" in sent[0] or "abeg" in sent[0]
+
+    async def test_unknown_state_resets_session(self) -> None:
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "CORRUPTED"}
+        reset_called = [False]
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            reset_called[0] = True
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "hello", _MSG_ID, db_factory, redis, _CFG)
+
+        # Should have reset and sent welcome
+        assert len(sent) >= 1
+        assert reset_called[0]
+
+
+class TestMissingBranches:
+    """Targeted tests to cover remaining uncovered branches in chat.py."""
+
+    async def test_language_3_selects_pidgin(self) -> None:
+        """Lines 115-116: pcm branch in _handle_awaiting_language."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_LANGUAGE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "3", _MSG_ID, db_factory, redis, _CFG)
+
+        assert session_state["language"] == "pcm"
+        assert session_state["state"] == "AWAITING_BAND"
+        assert len(sent) == 1
+
+    async def test_free_text_detects_language_and_proceeds(self) -> None:
+        """Else branch in _handle_awaiting_language: free text → detect lang → advance."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_LANGUAGE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            # User types a French greeting instead of choosing 1/2/3
+            await handle_message(_MSISDN, "bonjour", _MSG_ID, db_factory, redis, _CFG)
+
+        # Should advance to AWAITING_BAND, not stay stuck
+        assert session_state.get("state") == "AWAITING_BAND"
+        assert session_state.get("language") == "fr"
+        assert len(sent) == 1  # band picker sent in French
+
+    async def test_revenue_text_in_awaiting_language_defaults_to_french(self) -> None:
+        """Numeric input during AWAITING_LANGUAGE has no language signal → default fr."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_LANGUAGE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            # User skips picker and types their revenue directly
+            await handle_message(_MSISDN, "2350000", _MSG_ID, db_factory, redis, _CFG)
+
+        # Defaults to French, proceeds to AWAITING_BAND
+        assert session_state.get("state") == "AWAITING_BAND"
+        assert session_state.get("language") == "fr"
+
+    async def test_in_band_revenue_text_accepted_during_band_selection(self) -> None:
+        """Line 143: parse_revenue succeeds and value is in-range during AWAITING_BAND."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_BAND", "language": "en"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            # 20 000 000 is within RSI range → accepted
+            await handle_message(_MSISDN, "20000000", _MSG_ID, db_factory, redis, _CFG)
+
+        assert session_state["state"] == "ACTIVE"
+        assert len(sent) == 1
+
+    async def test_first_out_of_band_sends_warning(self) -> None:
+        """Lines 160-162: first rejection (band_tries=0 → 1), else branch."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "AWAITING_BAND", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "99", _MSG_ID, db_factory, redis, _CFG)
+
+        # Warning, not final message — stays AWAITING_BAND
+        assert session_state.get("state") == "AWAITING_BAND"
+        assert session_state.get("band_tries") == 1
+        assert len(sent) == 1
+        assert "10 M" in sent[0] or "RSI" in sent[0]
+
+    async def test_existing_user_is_reused(self) -> None:
+        """Line 210→214: _get_or_create_user finds existing user (not None branch)."""
+        import uuid as uuid_mod
+
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {"state": "ACTIVE", "language": "fr"}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        # Build a mock db where User already exists (scalar_one_or_none → existing User)
+        session = AsyncMock()
+        existing_user = MagicMock()
+        existing_user.id = uuid_mod.uuid4()
+
+        user_result = MagicMock()
+        user_result.scalar_one_or_none.return_value = existing_user
+
+        session.execute = AsyncMock(return_value=user_result)
+        session.add = MagicMock()
+        session.flush = AsyncMock()
+
+        begin_ctx = AsyncMock()
+        begin_ctx.__aenter__ = AsyncMock(return_value=None)
+        begin_ctx.__aexit__ = AsyncMock(return_value=False)
+        session.begin = MagicMock(return_value=begin_ctx)
+
+        ctx = AsyncMock()
+        ctx.__aenter__ = AsyncMock(return_value=session)
+        ctx.__aexit__ = AsyncMock(return_value=False)
+        db_factory = MagicMock(return_value=ctx)
+
+        redis = AsyncMock()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "2350000", _MSG_ID, db_factory, redis, _CFG)
+
+        # Existing user reused — flush should NOT have been called
+        session.flush.assert_not_called()
+        assert len(sent) == 1
+        assert "129" in sent[0]

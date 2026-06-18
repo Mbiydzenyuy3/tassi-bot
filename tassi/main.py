@@ -82,8 +82,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             for change in entry.get("changes", []):
                 value = change.get("value", {})
                 for message in value.get("messages", []):
-                    msisdn = message.get("from", "")
-                    message_id = message.get("id", "")
+                    msisdn = str(message.get("from", ""))
+                    message_id = str(message.get("id", ""))
+                    message_text = str(
+                        message.get("text", {}).get("body", "")
+                        if isinstance(message.get("text"), dict)
+                        else message.get("text", "")
+                    )
 
                     if await is_rate_limited(redis, msisdn, cfg.rate_limit_per_60s):
                         continue
@@ -91,7 +96,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     if await is_duplicate_message(redis, message_id):
                         continue
 
-                    background_tasks.add_task(handle_message, message, cfg)
+                    background_tasks.add_task(
+                        handle_message,
+                        msisdn,
+                        message_text,
+                        message_id,
+                        request.app.state.db_factory,
+                        redis,
+                        cfg,
+                    )
 
         return {"status": "ok"}
 

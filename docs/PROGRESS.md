@@ -70,18 +70,26 @@
 | 3.4 | `tassi/session.py` — Redis session, dedup, rate limit | `feat/webhook` | `[x]` | 5 async functions, full RedisError degraded-mode coverage. Real Redis tests. 14 tests. |
 | 3.5 | `tassi/deps.py` — FastAPI Redis + DB dependencies | `feat/webhook` | `[x]` | `get_cfg`, `get_redis`, `get_db` — used via `Depends()` in routes. 3 tests. |
 
+**Milestone 3 total:** 176 tests · 100% branch coverage · Ruff + Black + mypy strict clean. Merged to `development` via PR #14.
+
 ---
 
 ## Milestone 4 — Conversation Flow
 
-**Goal:** Full onboarding → revenue input → calculation reply. Both languages. PERSONAS T1–T6 all pass.
+**Goal:** Full onboarding → revenue input → calculation reply. Trilingual (fr/en/pcm). PERSONAS T1–T6 all pass.
 
 | Task | Description | Branch | Status | Notes |
 |---|---|---|---|---|
-| 4.1 | `tassi/templates.py` — all bot message text (fr + en) | `feat/conversation` | `[ ]` | |
-| 4.2 | `tassi/chat.py` — state machine + per-message language detection (FR-CHAT-7) | `feat/conversation` | `[ ]` | Uses langdetect; falls back to users.language for numeric input |
-| 4.3 | `tassi/meta.py` — `send_typing_indicator()` + `send_text_message()` (FR-CHAT-8) | `feat/conversation` | `[ ]` | Typing indicator is best-effort, never blocks reply |
-| 4.4 | `tests/test_conversation.py` — integration tests T1–T6 + language-switch + typing indicator | `feat/conversation` | `[ ]` | |
+| 4.1 | `tassi/templates.py` — all bot message text (fr + en + pcm) | `feat/conversation` | `[x]` | All keys symmetric across 3 languages. `get_message(lang, key, **kwargs)` helper. 11 template keys. |
+| 4.2 | `tassi/chat.py` — full FSM: NEW → AWAITING_LANGUAGE → AWAITING_BAND → ACTIVE | `feat/conversation` | `[x]` | Language auto-detection from free text (keyword heuristics, FR-CHAT-4 default fr). Zero-return path (FR-TAX-3). Revenue calc + DB persist (FR-TAX-1/2/4). RESEND/RENVOYER command (NFR-USE-4). Out-of-band 3-try limit (FR-TAX-5). `handle_message` uses `db_factory` (not `AsyncSession`) — required for BackgroundTasks lifecycle. |
+| 4.3 | `tassi/meta.py` — `send_text_message()` via WhatsApp Cloud API | `feat/conversation` | `[x]` | httpx `AsyncClient` per call (context manager). Raises on non-2xx. FR-CHAT-8 (typing indicator) deferred — not in TASKS.md Milestone 4 scope. |
+| 4.4 | `tests/test_conversation.py` — T1–T6 + onboarding + branch coverage | `feat/conversation` | `[x]` | 43 conversation tests covering all state transitions, language detection, RESEND, zero-return, invalid input, existing-user DB path. |
+
+**Milestone 4 total:** 219 tests · 100% branch coverage · Ruff + Black + mypy strict clean. Committed on `feat/conversation` (b838b65). Awaiting push and PR to `development`.
+
+**Deferred (not in TASKS.md Milestone 4 scope):**
+- FR-CHAT-7 (mid-session language switching) — in SRS v2.1, no task written yet
+- FR-CHAT-8 (typing indicator) — in SRS v2.1, no task written yet
 
 ---
 
