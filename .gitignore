@@ -61,10 +61,4 @@ Thumbs.db
 
 # ── Docker ────────────────────────────────────────────────────────────────────
 docker-volumes/
-# ── Docs ────────────────────────────────────────────────────────────────────
-PERSONAS.md
-SDD.md
-SRS.md
-APP.md
-TASKS.md
-PROGRESS.md
+# ── Docs (tracked in git — do not ignore) ───────────────────────────────────
