@@ -64,11 +64,11 @@
 
 | Task | Description | Branch | Status | Notes |
 |---|---|---|---|---|
-| 3.1 | Meta webhook verification endpoint (`GET /webhook`) | `feat/webhook` | `[ ]` | |
-| 3.2 | `tassi/security.py` — Meta signature verification (HMAC) | `feat/webhook` | `[ ]` | |
-| 3.3 | Webhook POST endpoint + background task dispatch | `feat/webhook` | `[ ]` | |
-| 3.4 | `tassi/session.py` — Redis session, dedup, rate limit | `feat/webhook` | `[ ]` | |
-| 3.5 | `tassi/deps.py` — FastAPI Redis + DB dependencies | `feat/webhook` | `[ ]` | |
+| 3.1 | Meta webhook verification endpoint (`GET /webhook`) | `feat/webhook` | `[x]` | Token match + challenge echo. 3 tests. |
+| 3.2 | `tassi/security.py` — Meta signature verification (HMAC) | `feat/webhook` | `[x]` | `hmac.compare_digest`, timing-safe, never raises. 4 tests. |
+| 3.3 | Webhook POST endpoint + background task dispatch | `feat/webhook` | `[x]` | Acks <500ms, HMAC check, idempotency, rate limit, BackgroundTasks dispatch. 5 tests. |
+| 3.4 | `tassi/session.py` — Redis session, dedup, rate limit | `feat/webhook` | `[x]` | 5 async functions, full RedisError degraded-mode coverage. Real Redis tests. 14 tests. |
+| 3.5 | `tassi/deps.py` — FastAPI Redis + DB dependencies | `feat/webhook` | `[x]` | `get_cfg`, `get_redis`, `get_db` — used via `Depends()` in routes. 3 tests. |
 
 ---
 
