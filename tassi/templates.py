@@ -53,6 +53,41 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
             "Envoyez votre chiffre d'affaires pour commencer."
         ),
         "resend_result": "Voici votre dernier calcul :\n\n{tax_result}",
+        "ask_operator": (
+            "💳 Tassi Plus — *{price_xaf} XAF/mois*\n\n"
+            "Vous recevrez des rappels de déclaration et accèderez à votre historique.\n\n"
+            "Choisissez votre opérateur :\n"
+            "1️⃣ MTN MoMo\n"
+            "2️⃣ Orange Money"
+        ),
+        "already_subscribed": "✅ Vous êtes déjà abonné à Tassi Plus.",
+        "subscribe_initiated": (
+            "⏳ Paiement en cours. Vérifiez votre téléphone pour le prompt USSD.\n"
+            "Envoyez *STATUS* pour vérifier l'état."
+        ),
+        "subscribe_error": (
+            "❌ Impossible d'initier le paiement pour le moment. Réessayez plus tard."
+        ),
+        "payment_confirmed": (
+            "🎉 Paiement confirmé ! Vous êtes maintenant abonné à *Tassi Plus*.\n"
+            "Envoyez *HISTORY* pour voir votre historique."
+        ),
+        "payment_failed": ("❌ Paiement échoué. Envoyez *SUBSCRIBE* pour réessayer."),
+        "payment_pending": (
+            "⏳ Votre paiement est encore en cours. Réessayez *STATUS* dans quelques minutes."
+        ),
+        "payment_just_initiated": (
+            "⏳ Paiement tout juste lancé. Attendez un moment puis envoyez *STATUS*."
+        ),
+        "no_pending_payment": (
+            "Aucun paiement en attente trouvé. Envoyez *SUBSCRIBE* pour vous abonner."
+        ),
+        "history_not_plus": (
+            "📊 L'historique est réservé aux abonnés *Tassi Plus*.\n"
+            "Envoyez *SUBSCRIBE* pour vous abonner."
+        ),
+        "history_empty": "Aucun calcul enregistré pour ce compte.",
+        "history_result": "{history_text}",
     },
     "en": {
         "ask_language": (
@@ -99,6 +134,34 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
             "No calculation found for this month. " "Send your revenue to get started."
         ),
         "resend_result": "Here is your last calculation:\n\n{tax_result}",
+        "ask_operator": (
+            "💳 Tassi Plus — *{price_xaf} XAF/month*\n\n"
+            "Get filing reminders and access 12 months of history.\n\n"
+            "Choose your operator:\n"
+            "1️⃣ MTN MoMo\n"
+            "2️⃣ Orange Money"
+        ),
+        "already_subscribed": "✅ You are already a Tassi Plus subscriber.",
+        "subscribe_initiated": (
+            "⏳ Payment in progress. Check your phone for the USSD prompt.\n"
+            "Send *STATUS* to check the payment status."
+        ),
+        "subscribe_error": ("❌ Could not initiate payment right now. Please try again later."),
+        "payment_confirmed": (
+            "🎉 Payment confirmed! You are now a *Tassi Plus* subscriber.\n"
+            "Send *HISTORY* to view your filing history."
+        ),
+        "payment_failed": ("❌ Payment failed. Send *SUBSCRIBE* to try again."),
+        "payment_pending": (
+            "⏳ Your payment is still processing. Try *STATUS* again in a few minutes."
+        ),
+        "payment_just_initiated": ("⏳ Payment just started. Wait a moment then send *STATUS*."),
+        "no_pending_payment": ("No pending payment found. Send *SUBSCRIBE* to subscribe."),
+        "history_not_plus": (
+            "📊 Filing history is for *Tassi Plus* subscribers.\n" "Send *SUBSCRIBE* to join."
+        ),
+        "history_empty": "No calculations recorded for this account.",
+        "history_result": "{history_text}",
     },
     "pcm": {
         "ask_language": (
@@ -143,6 +206,33 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
             "No calculation dey for dis month. " "Send your money wey you make to start."
         ),
         "resend_result": "Na dis your last calculation:\n\n{tax_result}",
+        "ask_operator": (
+            "💳 Tassi Plus — *{price_xaf} XAF/month*\n\n"
+            "You go get reminder wey go tell you when to file, plus 12 months history.\n\n"
+            "Pick your operator:\n"
+            "1️⃣ MTN MoMo\n"
+            "2️⃣ Orange Money"
+        ),
+        "already_subscribed": "✅ You don already subscribe for Tassi Plus.",
+        "subscribe_initiated": (
+            "⏳ Payment don start. Check your phone for USSD prompt.\n" "Send *STATUS* to check am."
+        ),
+        "subscribe_error": ("❌ We no fit start payment now. Abeg try again later."),
+        "payment_confirmed": (
+            "🎉 Payment don confirm! You don join *Tassi Plus*.\n"
+            "Send *HISTORY* to see your history."
+        ),
+        "payment_failed": ("❌ Payment fail. Send *SUBSCRIBE* to try again."),
+        "payment_pending": (
+            "⏳ Your payment still dey process. Try *STATUS* again for few minutes."
+        ),
+        "payment_just_initiated": ("⏳ Payment just start. Wait small then send *STATUS*."),
+        "no_pending_payment": ("No pending payment dey. Send *SUBSCRIBE* to join."),
+        "history_not_plus": (
+            "📊 History na for *Tassi Plus* subscribers only.\n" "Send *SUBSCRIBE* to join."
+        ),
+        "history_empty": "No calculation dey for dis account yet.",
+        "history_result": "{history_text}",
     },
 }
 

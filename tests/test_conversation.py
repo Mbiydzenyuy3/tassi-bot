@@ -7,8 +7,9 @@ template key selection, and that send_text_message is called with the
 right text. The real DB path is exercised in CI against the Postgres service.
 """
 
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -679,4 +680,403 @@ class TestMissingBranches:
         # Existing user reused — flush should NOT have been called
         session.flush.assert_not_called()
         assert len(sent) == 1
+        assert "129" in sent[0]
+
+
+# ── Milestone 5 payment command tests ────────────────────────────────────────
+
+
+def _result_mock(
+    scalar_one_or_none=None,
+    scalar_one=None,
+    scalars_all=None,
+) -> MagicMock:
+    r = MagicMock()
+    r.scalar_one_or_none.return_value = scalar_one_or_none
+    r.scalar_one.return_value = scalar_one
+    r.scalars.return_value.all.return_value = scalars_all if scalars_all is not None else []
+    return r
+
+
+def _make_db_factory_seq(execute_results: list) -> MagicMock:
+    """Factory whose session.execute returns results from execute_results in order."""
+    session = AsyncMock()
+    session.execute = AsyncMock(side_effect=execute_results)
+    session.add = MagicMock()
+    session.flush = AsyncMock()
+
+    begin_ctx = AsyncMock()
+    begin_ctx.__aenter__ = AsyncMock(return_value=None)
+    begin_ctx.__aexit__ = AsyncMock(return_value=False)
+    session.begin = MagicMock(return_value=begin_ctx)
+
+    ctx = AsyncMock()
+    ctx.__aenter__ = AsyncMock(return_value=session)
+    ctx.__aexit__ = AsyncMock(return_value=False)
+    return MagicMock(return_value=ctx)
+
+
+def _active_session(language: str = "fr") -> dict:
+    return {"state": "ACTIVE", "language": language}
+
+
+def _awaiting_operator_session(language: str = "fr") -> dict:
+    return {"state": "AWAITING_OPERATOR", "language": language}
+
+
+def _fake_redis_for(initial_session: dict):
+    """Return (redis, get_session, set_session) fakes for a given initial state."""
+    sessions: dict = {}
+    captured: list = []
+
+    async def fake_get(redis, msisdn):
+        return sessions.get(msisdn, initial_session.copy())
+
+    async def fake_set(redis, msisdn, data):
+        sessions[msisdn] = data
+        captured.append(data.copy())
+
+    return AsyncMock(), fake_get, fake_set, captured
+
+
+class TestSubscribeCommand:
+    async def test_subscribe_not_subscribed_asks_operator(self) -> None:
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=None)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "subscribe", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "500" in sent[0] or "MTN" in sent[0]
+
+    async def test_subscribe_already_subscribed_sends_message(self) -> None:
+        plus_user = MagicMock()
+        type(plus_user).is_plus = PropertyMock(return_value=True)
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=plus_user)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "abonnement", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "déjà" in sent[0] or "already" in sent[0]
+
+
+class TestAwaitingOperatorState:
+    async def test_mtn_operator_creates_payment_and_sends_initiated(self) -> None:
+        # _get_or_create_user: no existing user
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=None)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_awaiting_operator_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+            patch(
+                "tassi.chat.initiate_ussd_push",
+                new_callable=AsyncMock,
+                return_value="CPY-T-001",
+            ),
+        ):
+            await handle_message(_MSISDN, "1", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "STATUS" in sent[0] or "Vérifiez" in sent[0] or "Check" in sent[0]
+
+    async def test_orange_operator_is_accepted(self) -> None:
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=None)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_awaiting_operator_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+            patch(
+                "tassi.chat.initiate_ussd_push",
+                new_callable=AsyncMock,
+                return_value="CPY-T-002",
+            ),
+        ):
+            await handle_message(_MSISDN, "2", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "STATUS" in sent[0] or "Vérifiez" in sent[0] or "Check" in sent[0]
+
+    async def test_invalid_operator_reprompts(self) -> None:
+        db_factory = _make_db_factory_seq([])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_awaiting_operator_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "visa", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "MTN" in sent[0]
+
+    async def test_campay_error_sends_subscribe_error(self) -> None:
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=None)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_awaiting_operator_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+            patch("tassi.chat.initiate_ussd_push", side_effect=Exception("timeout")),
+        ):
+            await handle_message(_MSISDN, "1", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "paiement" in sent[0].lower() or "payment" in sent[0].lower()
+
+
+class TestStatusCommand:
+    async def test_status_no_pending_payment(self) -> None:
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=None)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "status", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "SUBSCRIBE" in sent[0] or "paiement" in sent[0].lower()
+
+    async def test_status_too_new_sends_just_initiated(self) -> None:
+        tx = MagicMock()
+        tx.created_at = datetime.now(tz=UTC) - timedelta(seconds=30)
+        tx.campay_reference = "CPY-NEW"
+        tx.status = "PENDING"
+
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=tx)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "statut", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "lancé" in sent[0] or "started" in sent[0] or "start" in sent[0]
+
+    async def test_status_null_reference_sends_pending(self) -> None:
+        tx = MagicMock()
+        tx.created_at = datetime.now(tz=UTC) - timedelta(minutes=5)
+        tx.campay_reference = None
+        tx.status = "PENDING"
+
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=tx)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "status", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "cours" in sent[0] or "processing" in sent[0] or "process" in sent[0]
+
+    async def test_status_polled_success_triggers_callback(self) -> None:
+        tx = MagicMock()
+        tx.created_at = datetime.now(tz=UTC) - timedelta(minutes=5)
+        tx.campay_reference = "CPY-POLLED"
+        tx.status = "PENDING"
+
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=tx)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", new_callable=AsyncMock),
+            patch(
+                "tassi.chat.get_transaction_status",
+                new_callable=AsyncMock,
+                return_value="SUCCESS",
+            ),
+            patch("tassi.chat.process_payment_callback", new_callable=AsyncMock) as mock_cb,
+        ):
+            await handle_message(_MSISDN, "status", _MSG_ID, db_factory, redis, _CFG)
+
+        mock_cb.assert_called_once()
+        assert mock_cb.call_args[0][1] == "SUCCESS"
+
+    async def test_status_polled_pending_sends_pending(self) -> None:
+        tx = MagicMock()
+        tx.created_at = datetime.now(tz=UTC) - timedelta(minutes=5)
+        tx.campay_reference = "CPY-STILL"
+        tx.status = "PENDING"
+
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=tx)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+            patch(
+                "tassi.chat.get_transaction_status",
+                new_callable=AsyncMock,
+                return_value="PENDING",
+            ),
+        ):
+            await handle_message(_MSISDN, "status", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "cours" in sent[0] or "processing" in sent[0] or "process" in sent[0]
+
+
+class TestHistoryCommand:
+    async def test_history_not_plus_sends_upgrade_message(self) -> None:
+        non_plus = MagicMock()
+        type(non_plus).is_plus = PropertyMock(return_value=False)
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=non_plus)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "history", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "SUBSCRIBE" in sent[0] or "Plus" in sent[0]
+
+    async def test_history_no_user_sends_upgrade_message(self) -> None:
+        db_factory = _make_db_factory_seq([_result_mock(scalar_one_or_none=None)])
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session("en"))
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "historique", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "SUBSCRIBE" in sent[0] or "Plus" in sent[0]
+
+    async def test_history_plus_empty_sends_empty_message(self) -> None:
+        plus_user = MagicMock()
+        plus_user.id = "user-id-1"
+        type(plus_user).is_plus = PropertyMock(return_value=True)
+        db_factory = _make_db_factory_seq(
+            [
+                _result_mock(scalar_one_or_none=plus_user),
+                _result_mock(scalars_all=[]),
+            ]
+        )
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "history", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "calcul" in sent[0].lower() or "calculation" in sent[0].lower()
+
+    async def test_history_plus_shows_results(self) -> None:
+        plus_user = MagicMock()
+        plus_user.id = "user-id-2"
+        type(plus_user).is_plus = PropertyMock(return_value=True)
+
+        calc = MagicMock(spec=TaxCalculation)
+        calc.fiscal_period = "2026-05"
+        calc.base_acompte = Decimal("129250")
+
+        db_factory = _make_db_factory_seq(
+            [
+                _result_mock(scalar_one_or_none=plus_user),
+                _result_mock(scalars_all=[calc]),
+            ]
+        )
+        redis, fake_get, fake_set, _ = _fake_redis_for(_active_session())
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):
+            sent.append(a[3] if len(a) > 3 else "")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "history", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 1
+        assert "2026-05" in sent[0]
         assert "129" in sent[0]
