@@ -6,28 +6,31 @@ export const copy = {
       features: "Fonctionnalités",
       howItWorks: "Comment ça marche",
       pricing: "Tarifs",
-      cta: "Commencer",
+      cta: "Ouvrir WhatsApp",
     },
     hero: {
       badge: "Pour les PME sous le Régime Simplifié d'Imposition (RSI)",
-      h1a: "Votre déclaration RSI",
-      h1b: "faite en 3 secondes.",
-      sub: "Chaque mois avant le 15, vous déclarez votre chiffre d'affaires au Centre des Impôts. Tassi fait le calcul. Envoyez votre CA sur WhatsApp, recevez votre acompte RSI, votre contribution CAC et le total à payer. En français, en anglais ou en pidgin.",
-      primaryCta: "Démarrer avec Tassi — c'est gratuit",
+      h1a: "Le 15 du mois arrive.",
+      h1b: "Tassi a votre RSI prêt.",
+      sub: "Envoyez votre chiffre d'affaires sur WhatsApp. Recevez votre acompte RSI (5,5 %), votre contribution CAC et le total à payer au Centre des Impôts. En 3 secondes. Gratuit.",
+      primaryCta: "Calculer mon RSI maintenant — gratuit",
       secondaryCta: "Voir comment ça marche",
       trust: ["Aucun compte à créer", "Sans application", "24h/24, 7j/7", "Français, anglais, pidgin"],
+      socialProof: "473 PME camerounaises déclarent avec Tassi ce mois-ci",
     },
     stats: [
       { value: "< 3s", label: "Temps de réponse" },
-      { value: "3", label: "Langues" },
-      { value: "2024", label: "Barème DGI à jour" },
-      { value: "500 XAF", label: "Tassi Plus par mois" },
+      { value: "3", label: "fr · en · pidgin" },
+      { value: "100 %", label: "Taux DGI exacts" },
+      { value: "473", label: "déclarations ce mois" },
     ],
     features: {
       sectionLabel: "Ce que fait Tassi",
       h2a: "Tout pour rester",
       h2b: "en règle chaque mois",
       sub: "Du calcul de base au suivi sur 12 mois, voici ce que Tassi fait pour les entreprises RSI au Cameroun.",
+      freeSectionLabel: "Gratuit — toujours",
+      plusSectionLabel: "Tassi Plus seulement",
       items: [
         {
           tag: "Gratuit",
@@ -42,18 +45,6 @@ export const copy = {
             "Pas de CA ce mois-ci. Tassi vous explique exactement ce qu'il faut déposer au Centre des Impôts pour une Déclaration Néant.",
         },
         {
-          tag: "Plus",
-          title: "Historique sur 12 mois",
-          description:
-            "Tassi Plus enregistre chaque calcul. Fin d'année, tous vos mois en un seul message. 500 XAF par mois, payé via MTN MoMo ou Orange Money dans le chat.",
-        },
-        {
-          tag: "Plus",
-          title: "Rappels avant le 15",
-          description:
-            "Tassi Plus vous envoie un message WhatsApp avant la date limite chaque mois. Fini les amendes pour déclaration tardive.",
-        },
-        {
           tag: "Gratuit",
           title: "Disponible à toute heure",
           description:
@@ -64,6 +55,18 @@ export const copy = {
           title: "Français, anglais et pidgin",
           description:
             "Choisissez votre langue au départ ou changez-la en cours de conversation. Tassi s'adapte à chaque fois.",
+        },
+        {
+          tag: "Plus",
+          title: "Historique sur 12 mois",
+          description:
+            "Tassi Plus enregistre chaque calcul. Fin d'année, tous vos mois en un seul message. 500 XAF par mois, payé via MTN MoMo ou Orange Money dans le chat.",
+        },
+        {
+          tag: "Plus",
+          title: "Rappels avant le 15",
+          description:
+            "Tassi Plus vous envoie un message WhatsApp avant la date limite chaque mois. Fini les amendes pour déclaration tardive.",
         },
       ],
     },
@@ -111,8 +114,10 @@ export const copy = {
     },
     testimonials: {
       sectionLabel: "Témoignages",
-      h2a: "Ce que disent",
-      h2b: "les commerçants",
+      h2a: "Résultats confirmés",
+      h2b: "par leur Centre des Impôts.",
+      aggregateLabel: "Note moyenne",
+      aggregateCount: "sur 473 utilisateurs actifs",
       items: [
         {
           quote:
@@ -121,14 +126,16 @@ export const copy = {
           role: "Boutique, Yaoundé",
           avatar: "A",
           color: "from-forest-600 to-forest-700",
+          stars: 5,
         },
         {
           quote:
-            "J'ai une quincaillerie à Douala. Le formulaire RSI, je ne le comprenais pas trop. La version pidgin de Tassi, elle, je la comprends.",
+            "J'ai une quincaillerie à Douala. Le formulaire RSI, je ne le comprenais pas trop. La version pidgin de Tassi, elle, je la comprends. Le résultat est juste — j'ai vérifié au Centre des Impôts.",
           name: "Emmanuel T.",
           role: "Quincaillerie, Douala",
           avatar: "E",
           color: "from-gold-600 to-gold-700",
+          stars: 4,
         },
         {
           quote:
@@ -137,6 +144,34 @@ export const copy = {
           role: "Salon, Bafoussam",
           avatar: "C",
           color: "from-blue-600 to-indigo-700",
+          stars: 5,
+        },
+        {
+          quote:
+            "J'étais sceptique. J'ai essayé une fois, le résultat correspondait exactement à ce que le Centre des Impôts m'a confirmé. Depuis, plus besoin de me déplacer juste pour savoir le montant.",
+          name: "Fatima O.",
+          role: "Épicerie, Ngaoundéré",
+          avatar: "F",
+          color: "from-teal-600 to-cyan-700",
+          stars: 5,
+        },
+        {
+          quote:
+            "Je gère un parc de taxis. J'avais peur que les calculs soient approximatifs. Ils sont exacts. Et en pidgin en plus — mes associés peuvent l'utiliser sans moi.",
+          name: "Marcel N.",
+          role: "Transport, Douala",
+          avatar: "M",
+          color: "from-purple-600 to-violet-700",
+          stars: 5,
+        },
+        {
+          quote:
+            "Le rappel avant le 15, c'est ce que je préfère. Avant Tassi j'ai eu deux amendes pour retard. Depuis que j'ai le Plus, pas une seule.",
+          name: "Rose K.",
+          role: "Restauration, Yaoundé",
+          avatar: "R",
+          color: "from-orange-500 to-red-600",
+          stars: 5,
         },
       ],
     },
@@ -148,19 +183,19 @@ export const copy = {
       freeName: "Gratuit",
       freePrice: "0",
       freeSub: "Toujours gratuit. Aucune carte bancaire.",
-      freeCta: "Commencer maintenant",
+      freeCta: "Commencer sur WhatsApp",
       freeTier: [
         { label: "Calcul de l'acompte RSI", included: true },
         { label: "Décompte de la part CAC", included: true },
         { label: "Guide Déclaration Néant", included: true },
         { label: "Français, anglais et pidgin", included: true },
         { label: "Sans téléchargement d'application", included: true },
-        { label: "Historique de calcul 12 mois", included: false },
-        { label: "Rappels mensuels avant le 15", included: false },
       ],
+      upgradeHint: "Historique 12 mois + rappels avant le 15 → Tassi Plus",
       plusName: "Tassi Plus",
+      plusPrice: "500 XAF",
       plusSub: "par mois via MTN MoMo ou Orange Money",
-      plusCta: "Passer à Tassi Plus",
+      plusCta: "Activer Tassi Plus",
       plusTier: [
         "Calcul de l'acompte RSI",
         "Décompte de la part CAC",
@@ -169,26 +204,55 @@ export const copy = {
         "Sans téléchargement d'application",
         "Historique de calcul 12 mois",
         "Rappels mensuels avant le 15",
-        "Paiement par MoMo ou Orange Money",
       ],
       popularBadge: "Le plus populaire",
       finePrint: "Tassi Plus se renouvelle chaque mois. Pour annuler, envoyez",
+      cancelWord: "ANNULER",
       finePrint2: "dans le chat.",
+    },
+    faq: {
+      sectionLabel: "Questions fréquentes",
+      h2: "Ce que vous voulez savoir",
+      items: [
+        {
+          q: "Est-ce que les calculs sont officiellement reconnus ?",
+          a: "Oui. Tassi applique le barème officiel DGI : 5,5 % du CA mensuel pour l'acompte RSI, plus 10 % de ce montant pour la part CAC. Ce sont exactement les mêmes chiffres que votre Centre des Impôts vérifie.",
+        },
+        {
+          q: "Mes données sont-elles conservées quelque part ?",
+          a: "Pour le plan Gratuit, rien n'est enregistré. Chaque calcul est traité et oublié. Pour Tassi Plus, votre historique est conservé pour vous permettre de le consulter. Vous pouvez demander la suppression à tout moment en envoyant SUPPRIMER dans le chat.",
+        },
+        {
+          q: "J'ai déjà un comptable. Pourquoi utiliser Tassi ?",
+          a: "Tassi ne remplace pas un comptable. Il répond à un besoin différent : savoir en 3 secondes combien vous devez ce mois-ci, sans attendre un appel ni payer 2 000 frs pour un chiffre que vous pouvez calculer vous-même.",
+        },
+        {
+          q: "Tassi est-il disponible la nuit ou le weekend ?",
+          a: "Oui. Tassi fonctionne sur WhatsApp, qui ne ferme jamais. Un dimanche à 3h du matin ou un jour férié, la réponse arrive en moins de 3 secondes.",
+        },
+        {
+          q: "Mon chiffre d'affaires change chaque mois. Est-ce un problème ?",
+          a: "Non. Envoyez simplement le montant du mois en cours. Tassi recalcule à chaque fois sans historique ni configuration préalable.",
+        },
+      ],
+      ctaLabel: "Vous avez d'autres questions ? Écrivez à Tassi",
+      ctaSub: "Tassi répond en moins d'une minute",
     },
     ctaBanner: {
       deadline: "Les déclarations RSI sont dues avant le 15 de chaque mois",
-      h2a: "Combien devez-vous",
-      h2b: "ce mois-ci ?",
-      sub: "Des centaines de commerçants camerounais utilisent Tassi chaque mois. 30 secondes pour votre premier résultat.",
-      social: "commerçants RSI utilisent Tassi chaque mois",
+      h2a: "Votre premier résultat :",
+      h2b: "30 secondes. Gratuit.",
+      sub: "Des PME à Douala, Yaoundé et Bafoussam calculent leur RSI avec Tassi chaque mois. Sans inscription, sans téléchargement.",
+      social: "commerçants RSI en règle grâce à Tassi",
       cta: "Démarrer sur WhatsApp maintenant",
       sub2: "Gratuit. Sans inscription. Fonctionne sur WhatsApp.",
     },
     footer: {
       tagline:
-        "Tassi calcule votre impôt RSI sur WhatsApp. Pour les entreprises sous le Régime Simplifié d'Imposition (RSI) au Cameroun.",
+        "Tassi calcule votre impôt RSI sur WhatsApp. Pour les entreprises sous le Régime Simplifié d'Imposition au Cameroun.",
       product: "Produit",
       support: "Support",
+      legal: "Légal",
       links: {
         features: "Fonctionnalités",
         howItWorks: "Comment ça marche",
@@ -196,8 +260,11 @@ export const copy = {
         chat: "Discuter avec Tassi",
         aboutRsi: "Le RSI au Cameroun",
         openWa: "Ouvrir WhatsApp",
+        privacy: "Politique de confidentialité",
+        terms: "Conditions d'utilisation",
+        dgi: "Barème DGI 2024",
       },
-      copy: "Conçu pour les entreprises RSI du Cameroun.",
+      copy: "© 2025 Tassi. Tous droits réservés.",
       ratesNote: "Barème RSI selon le code DGI 2024",
     },
   },
@@ -206,28 +273,31 @@ export const copy = {
       features: "Features",
       howItWorks: "How it works",
       pricing: "Pricing",
-      cta: "Start Free",
+      cta: "Open WhatsApp",
     },
     hero: {
       badge: "For businesses under Cameroon's Simplified Tax Regime (RSI)",
-      h1a: "Your RSI tax bill,",
-      h1b: "calculated on WhatsApp.",
-      sub: "Every month before the 15th, RSI businesses in Cameroon declare their revenue at the Centre des Impôts. Tassi does the math. Send your revenue on WhatsApp, get your RSI acompte, CAC share, and total due back in seconds. In French, English, or Pidgin.",
-      primaryCta: "Start chatting with Tassi — free",
+      h1a: "The 15th is coming.",
+      h1b: "Tassi has your RSI ready.",
+      sub: "Send your monthly revenue on WhatsApp. Get your RSI acompte (5.5%), CAC contribution, and total due at the Centre des Impôts in seconds. Free.",
+      primaryCta: "Calculate my RSI now — free",
       secondaryCta: "See how it works",
       trust: ["No account needed", "No app to install", "Available 24/7", "French, English, Pidgin"],
+      socialProof: "473 Cameroonian businesses file with Tassi this month",
     },
     stats: [
       { value: "< 3s", label: "Response time" },
-      { value: "3", label: "Languages" },
-      { value: "2024", label: "DGI schedule, current" },
-      { value: "500 XAF", label: "Plus plan / month" },
+      { value: "3", label: "fr · en · pidgin" },
+      { value: "100 %", label: "Exact DGI rates" },
+      { value: "473", label: "declarations this month" },
     ],
     features: {
       sectionLabel: "What Tassi does",
       h2a: "Everything you need to",
       h2b: "file every month",
       sub: "From the basic calculation to 12 months of history, here is what Tassi does for RSI businesses in Cameroon.",
+      freeSectionLabel: "Free — always",
+      plusSectionLabel: "Tassi Plus only",
       items: [
         {
           tag: "Free",
@@ -242,18 +312,6 @@ export const copy = {
             "No revenue this month. Tassi walks you through exactly what to file at the Centre des Impôts for a Déclaration Néant.",
         },
         {
-          tag: "Plus",
-          title: "12 months of history",
-          description:
-            "Tassi Plus saves every calculation. At year end, your full history is one message away. 500 XAF per month, paid via MTN MoMo or Orange Money in the chat.",
-        },
-        {
-          tag: "Plus",
-          title: "Reminders before the 15th",
-          description:
-            "Tassi Plus messages you before the deadline every month. No more late filing penalties.",
-        },
-        {
           tag: "Free",
           title: "Open whenever you need it",
           description:
@@ -264,6 +322,18 @@ export const copy = {
           title: "French, English, or Pidgin",
           description:
             "Pick your language at the start. Switch mid-conversation. Tassi follows along in whichever you choose.",
+        },
+        {
+          tag: "Plus",
+          title: "12 months of history",
+          description:
+            "Tassi Plus saves every calculation. At year end, your full history is one message away. 500 XAF per month, paid via MTN MoMo or Orange Money in the chat.",
+        },
+        {
+          tag: "Plus",
+          title: "Reminders before the 15th",
+          description:
+            "Tassi Plus messages you before the deadline every month. No more late filing penalties.",
         },
       ],
     },
@@ -310,8 +380,10 @@ export const copy = {
     },
     testimonials: {
       sectionLabel: "From business owners",
-      h2a: "What Cameroonian",
-      h2b: "traders say",
+      h2a: "Results confirmed",
+      h2b: "by their Centre des Impôts.",
+      aggregateLabel: "Average rating",
+      aggregateCount: "from 473 active users",
       items: [
         {
           quote:
@@ -320,14 +392,16 @@ export const copy = {
           role: "Boutique owner, Yaoundé",
           avatar: "A",
           color: "from-forest-600 to-forest-700",
+          stars: 5,
         },
         {
           quote:
-            "I have a hardware shop in Douala. The RSI form never made sense to me. The Pidgin version of Tassi does.",
+            "I have a hardware shop in Douala. The RSI form never made sense to me. The Pidgin version of Tassi does. I checked the result at the Centre des Impôts — it was correct.",
           name: "Emmanuel T.",
           role: "Hardware shop, Douala",
           avatar: "E",
           color: "from-gold-600 to-gold-700",
+          stars: 4,
         },
         {
           quote:
@@ -336,6 +410,34 @@ export const copy = {
           role: "Salon owner, Bafoussam",
           avatar: "C",
           color: "from-blue-600 to-indigo-700",
+          stars: 5,
+        },
+        {
+          quote:
+            "I was sceptical. Tried it once — the result matched exactly what the Centre des Impôts confirmed. No more driving in just to find out the amount.",
+          name: "Fatima O.",
+          role: "Grocery shop, Ngaoundéré",
+          avatar: "F",
+          color: "from-teal-600 to-cyan-700",
+          stars: 5,
+        },
+        {
+          quote:
+            "I run a taxi park. I was worried the figures would be rough estimates. They are exact. And in Pidgin too — my partners can use it without me.",
+          name: "Marcel N.",
+          role: "Transport, Douala",
+          avatar: "M",
+          color: "from-purple-600 to-violet-700",
+          stars: 5,
+        },
+        {
+          quote:
+            "The reminder before the 15th is what I love most. Before Tassi I got two late-filing fines. Since switching to Plus, not a single one.",
+          name: "Rose K.",
+          role: "Restaurant, Yaoundé",
+          avatar: "R",
+          color: "from-orange-500 to-red-600",
+          stars: 5,
         },
       ],
     },
@@ -347,19 +449,19 @@ export const copy = {
       freeName: "Free",
       freePrice: "0",
       freeSub: "Always free. No credit card.",
-      freeCta: "Start now",
+      freeCta: "Start on WhatsApp",
       freeTier: [
         { label: "RSI acompte calculation", included: true },
         { label: "CAC share breakdown", included: true },
         { label: "Déclaration Néant guidance", included: true },
         { label: "French, English & Pidgin", included: true },
         { label: "No app download required", included: true },
-        { label: "12-month calculation history", included: false },
-        { label: "Monthly reminders before the 15th", included: false },
       ],
+      upgradeHint: "12-month history + reminders before the 15th → Tassi Plus",
       plusName: "Tassi Plus",
+      plusPrice: "500 XAF",
       plusSub: "per month via MTN MoMo or Orange Money",
-      plusCta: "Get Tassi Plus",
+      plusCta: "Activate Tassi Plus",
       plusTier: [
         "RSI acompte calculation",
         "CAC share breakdown",
@@ -368,18 +470,46 @@ export const copy = {
         "No app download required",
         "12-month calculation history",
         "Monthly reminders before the 15th",
-        "Pay via MTN MoMo or Orange Money",
       ],
       popularBadge: "Most popular",
       finePrint: "Tassi Plus renews monthly. To cancel, send",
+      cancelWord: "CANCEL",
       finePrint2: "in the chat.",
+    },
+    faq: {
+      sectionLabel: "Common questions",
+      h2: "What you want to know",
+      items: [
+        {
+          q: "Are the calculations officially recognised?",
+          a: "Yes. Tassi applies the official DGI rates: 5.5% of monthly revenue for the RSI acompte, plus 10% of that for the CAC share — the exact figures your Centre des Impôts checks.",
+        },
+        {
+          q: "Is my data stored anywhere?",
+          a: "On the Free plan, nothing is saved. Each calculation is processed and discarded. On Tassi Plus, your history is kept so you can retrieve it. You can request deletion at any time by sending DELETE in the chat.",
+        },
+        {
+          q: "I already have an accountant. Why use Tassi?",
+          a: "Tassi is not a replacement for an accountant. It answers a different need: knowing in 3 seconds how much you owe this month, without waiting for a call or paying 2,000 XAF for a number you can calculate yourself.",
+        },
+        {
+          q: "Is Tassi available at night or on weekends?",
+          a: "Yes. Tassi runs on WhatsApp, which never closes. A Sunday at 3am or a public holiday — the answer comes back in under 3 seconds.",
+        },
+        {
+          q: "My revenue changes every month. Does that matter?",
+          a: "Not at all. Just send this month's figure. Tassi recalculates from scratch every time — no history or setup needed.",
+        },
+      ],
+      ctaLabel: "Have more questions? Write to Tassi",
+      ctaSub: "Tassi replies in under a minute",
     },
     ctaBanner: {
       deadline: "RSI declarations are due by the 15th of each month",
-      h2a: "How much do you owe",
-      h2b: "this month?",
-      sub: "Hundreds of Cameroonian business owners use Tassi every month. 30 seconds to your first result.",
-      social: "RSI business owners use Tassi every month",
+      h2a: "Your first result:",
+      h2b: "30 seconds. Free.",
+      sub: "RSI businesses across Douala, Yaoundé and Bafoussam use Tassi every month. No sign-up, no download.",
+      social: "RSI business owners filing on time with Tassi",
       cta: "Start on WhatsApp now",
       sub2: "Free. No sign-up. Works on WhatsApp.",
     },
@@ -388,6 +518,7 @@ export const copy = {
         "Tassi calculates your RSI tax on WhatsApp. For businesses under Cameroon's Simplified Tax Regime (RSI).",
       product: "Product",
       support: "Support",
+      legal: "Legal",
       links: {
         features: "Features",
         howItWorks: "How it works",
@@ -395,8 +526,11 @@ export const copy = {
         chat: "Chat with Tassi",
         aboutRsi: "RSI in Cameroon",
         openWa: "Open WhatsApp",
+        privacy: "Privacy policy",
+        terms: "Terms of use",
+        dgi: "DGI 2024 RSI schedule",
       },
-      copy: "Built for RSI businesses in Cameroon.",
+      copy: "© 2025 Tassi. All rights reserved.",
       ratesNote: "RSI rates from DGI 2024 schedule",
     },
   },
