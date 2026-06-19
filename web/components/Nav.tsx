@@ -6,36 +6,28 @@ import { usePathname } from "next/navigation";
 import { WHATSAPP_URL } from "@/lib/constants";
 import type { Copy, Lang } from "@/lib/i18n";
 
-/* ── Enterprise logo mark ── */
-function TassiLogo({ size = 40 }: { size?: number }) {
+/* ── Arc crescent logo mark (concentric C-shapes, Logo 4 style) ── */
+function TassiLogo() {
   return (
     <svg
-      width={size}
-      height={size}
+      className="w-10 h-10 3xl:w-12 3xl:h-12 4xl:w-16 4xl:h-16 flex-shrink-0"
       viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-label="Tassi logo"
     >
-      <defs>
-        <linearGradient id="navLG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#052e16" />
-          <stop offset="100%" stopColor="#166534" />
-        </linearGradient>
-        <radialGradient id="navSH" cx="30%" cy="22%" r="55%" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.11)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-        </radialGradient>
-      </defs>
-      {/* Container */}
-      <rect width="40" height="40" rx="9" fill="url(#navLG)" />
-      <rect width="40" height="40" rx="9" fill="url(#navSH)" />
-      {/* T crossbar */}
-      <rect x="7" y="10" width="26" height="6" rx="1.5" fill="white" />
-      {/* T stem */}
-      <rect x="15.5" y="10" width="9" height="20" rx="1.5" fill="white" />
-      {/* Gold totals line — the ledger "total" row */}
-      <rect x="7" y="33" width="26" height="3" rx="1.5" fill="#eab308" />
+      {/*
+        Two concentric C-arcs opening to the right.
+        Circle center (23, 20). Each arc runs from 300° down through
+        270° (top) → 180° (left) → 90° (bottom) → 60°, tracing the
+        left three-quarters of each circle (240° sweep, large-arc=1, sweep=0).
+      */}
+      {/* Outer arc — r=16 */}
+      <path d="M 31,6.14 A 16,16 0 1,0 31,33.86"
+        stroke="#16a34a" strokeWidth="4" strokeLinecap="round" />
+      {/* Inner arc — r=10 */}
+      <path d="M 28,11.34 A 10,10 0 1,0 28,28.66"
+        stroke="#16a34a" strokeWidth="3.5" strokeLinecap="round" />
     </svg>
   );
 }
@@ -73,11 +65,14 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
         : "bg-transparent"
         }`}
     >
-      <nav className="max-w-7xl 3xl:max-w-9xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 h-16 xl:h-20 3xl:h-24 flex items-center justify-between">
+      <nav className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-11xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28 h-16 xl:h-20 3xl:h-24 4xl:h-32 flex items-center justify-between">
         {/* Logo */}
         <Link href={`/${lang}`} className="flex items-center gap-2.5 3xl:gap-3 flex-shrink-0">
-          <TassiLogo size={40} />
-          <span className="font-bold text-gray-900 text-xl xl:text-2xl 3xl:text-3xl tracking-tight">Tassi</span>
+          <TassiLogo />
+          <div className="flex flex-col leading-none">
+            <span className="font-bold text-gray-900 text-xl xl:text-2xl 3xl:text-3xl 4xl:text-4xl tracking-tight">Tassi</span>
+            <span className="hidden sm:block text-[9px] xl:text-[10px] 3xl:text-xs text-gray-400 mt-0.5 font-medium tracking-wide">Simplify Your Monthly Tax</span>
+          </div>
         </Link>
 
         {/* Desktop nav */}
@@ -97,15 +92,18 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
         <div className="hidden md:flex items-center gap-3 3xl:gap-4">
           <Link
             href={otherPath}
-            className="text-xs xl:text-sm font-bold uppercase px-3 py-1.5 3xl:px-4 3xl:py-2 rounded-lg border border-gray-200 text-gray-500 hover:border-forest-300 hover:text-forest-700 transition-colors tracking-wider"
+            className="inline-flex items-center gap-1.5 text-xs xl:text-sm font-semibold uppercase px-3 py-1.5 3xl:px-4 3xl:py-2 rounded-lg border border-gray-200 text-gray-500 hover:border-forest-300 hover:text-forest-700 transition-colors tracking-wider"
           >
-            {otherLang}
+            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {otherLang.toUpperCase()}
           </Link>
           <a
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 btn-shimmer text-white text-sm xl:text-base 3xl:text-lg px-5 py-2.5 3xl:px-7 3xl:py-3.5 rounded-xl font-semibold shadow-lg shadow-forest-200"
+            className="inline-flex items-center gap-2 btn-shimmer text-white text-sm xl:text-base 3xl:text-lg 4xl:text-xl px-5 py-2.5 3xl:px-7 3xl:py-3.5 4xl:px-9 4xl:py-5 rounded-xl font-semibold shadow-lg shadow-forest-200"
           >
             <WaIcon />
             {t.cta}
