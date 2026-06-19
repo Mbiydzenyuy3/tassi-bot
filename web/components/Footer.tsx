@@ -5,29 +5,28 @@ import type { Copy, Lang } from "@/lib/i18n";
 function TassiLogo() {
   return (
     <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Tassi logo">
-      <defs>
-        <linearGradient id="ftLG" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#052e16" />
-          <stop offset="100%" stopColor="#166534" />
-        </linearGradient>
-        <radialGradient id="ftSH" cx="30%" cy="22%" r="55%" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.11)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-        </radialGradient>
-      </defs>
-      <rect width="40" height="40" rx="9" fill="url(#ftLG)" />
-      <rect width="40" height="40" rx="9" fill="url(#ftSH)" />
-      <rect x="7" y="10" width="26" height="6" rx="1.5" fill="white" />
-      <rect x="15.5" y="10" width="9" height="20" rx="1.5" fill="white" />
-      <rect x="7" y="33" width="26" height="3" rx="1.5" fill="#eab308" />
+      {/* Outer arc */}
+      <path
+        d="M 31,6.14 A 16,16 0 1,0 31,33.86"
+        stroke="white"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      {/* Inner arc */}
+      <path
+        d="M 28,11.34 A 10,10 0 1,0 28,28.66"
+        stroke="white"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
-  const year = new Date().getFullYear();
+  const dgiUrl = "https://www.impots.cm";
 
-  const footerLinks = [
+  const footerCols = [
     {
       heading: t.product,
       links: [
@@ -40,7 +39,15 @@ export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
       heading: t.support,
       links: [
         { label: t.links.chat, href: WHATSAPP_URL },
-        { label: t.links.aboutRsi, href: "#" },
+        { label: t.links.aboutRsi, href: `/${lang}#faq` },
+      ],
+    },
+    {
+      heading: t.legal,
+      links: [
+        { label: t.links.privacy, href: `/${lang}/privacy` },
+        { label: t.links.terms, href: `/${lang}/terms` },
+        { label: t.links.dgi, href: dgiUrl },
       ],
     },
   ];
@@ -63,8 +70,8 @@ export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
         style={{ width: 600, height: 600, background: "radial-gradient(circle at 80% 10%, #4ade80, transparent 60%)" }}
       />
 
-      <div className="max-w-7xl 3xl:max-w-9xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 pt-20 xl:pt-28 3xl:pt-36 pb-10 xl:pb-14 relative">
-        <div className="grid md:grid-cols-[2fr_1fr_1fr] xl:grid-cols-[3fr_1fr_1fr] gap-10 md:gap-16 xl:gap-20 mb-12 xl:mb-16">
+      <div className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-11xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28 pt-20 xl:pt-28 3xl:pt-36 4xl:pt-48 pb-10 xl:pb-14 4xl:pb-20 relative">
+        <div className="grid md:grid-cols-[2fr_1fr_1fr_1fr] xl:grid-cols-[3fr_1fr_1fr_1fr] gap-10 md:gap-12 xl:gap-16 mb-12 xl:mb-16">
           {/* Brand column */}
           <div>
             <div className="flex items-center gap-2.5 mb-4">
@@ -88,7 +95,7 @@ export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
           </div>
 
           {/* Link columns */}
-          {footerLinks.map((col) => (
+          {footerCols.map((col) => (
             <div key={col.heading}>
               <p className="text-white font-bold text-sm xl:text-base uppercase tracking-wider mb-4 xl:mb-5">
                 {col.heading}
@@ -114,7 +121,7 @@ export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-8 xl:pt-10 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-green-400 text-xs xl:text-sm 3xl:text-base">
-            &copy; {year} Tassi. {t.copy}
+            {t.copy}
           </p>
           <div className="flex items-center gap-1.5 text-xs xl:text-sm 3xl:text-base text-green-500">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
