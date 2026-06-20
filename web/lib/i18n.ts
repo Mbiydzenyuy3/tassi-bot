@@ -285,7 +285,7 @@ export const copy = {
     founderNote: {
       sectionLabel: "De la fondatrice",
       h2: "Pourquoi j'ai créé Tassi",
-      quote: "J'ai regardé mon oncle perdre de l'argent chaque mois — pas parce qu'il gérait mal son commerce, mais parce qu'il n'arrivait pas à suivre ses obligations fiscales. Date manquée. Montant mal calculé. Amende. J'ai interrogé des dizaines de commerçants RSI au Cameroun. Le même problème, partout. J'ai créé Tassi pour qu'ils aient enfin un outil aussi simple que WhatsApp.",
+      quote: "J'ai regardé mon oncle perdre de l'argent chaque mois, pas parce qu'il gérait mal son commerce, mais parce qu'il n'arrivait pas à suivre ses obligations fiscales. Date manquée. Montant mal calculé. Amende. J'ai interrogé des dizaines de commerçants RSI au Cameroun. Le même problème, partout. J'ai créé Tassi pour qu'ils aient enfin un outil aussi simple que WhatsApp.",
       name: "Eileen Leila",
       role: "Fondatrice & CEO, Tassi",
     },
@@ -302,7 +302,7 @@ export const copy = {
       badge: "For businesses under Cameroon's Simplified Tax Regime (RSI)",
       h1a: "The 15th is coming.",
       h1b: "Tassi has your RSI ready.",
-      sub: "Send your monthly revenue on WhatsApp — get your RSI (5.5%), CAC, and total DGI due in seconds. Free.",
+      sub: "Send your monthly revenue on WhatsApp and get your RSI (5.5%), CAC, and total DGI due in seconds. Free.",
       primaryCta: "Chat with Tassi",
       secondaryCta: "See how it works",
       trust: ["No account needed", "No app to install", "Available 24/7", "French, English, Pidgin"],
@@ -326,7 +326,7 @@ export const copy = {
           tag: "Free",
           title: "RSI calculated in 3 seconds",
           description:
-            "Send your revenue — get your RSI acompte, CAC share, and total DGI due in under 3 seconds.",
+            "Send your revenue and get your RSI acompte, CAC share, and total DGI due in under 3 seconds.",
         },
         {
           tag: "Free",
@@ -344,13 +344,13 @@ export const copy = {
           tag: "Free",
           title: "French, English, or Pidgin",
           description:
-            "Start in French, switch to Pidgin mid-conversation — Tassi keeps up.",
+            "Start in French, switch to Pidgin mid-conversation.Tassi keeps up.",
         },
         {
           tag: "Plus",
           title: "12 months of history",
           description:
-            "Every calculation saved — in January, your whole year is one message away. 500 XAF/month via MoMo or Orange Money.",
+            "Every calculation saved. Your whole year is one message away. 500 XAF/month via MoMo or Orange Money.",
         },
         {
           tag: "Plus",
@@ -368,7 +368,7 @@ export const copy = {
           tag: "Plus",
           title: "Automatic Reminders",
           description:
-            "Reminders on the 1st and 12th — never miss the 15th again.",
+            "Reminders on the 1st and 12th, never miss the 15th again.",
         },
       ],
     },
@@ -449,7 +449,7 @@ export const copy = {
         },
         {
           quote:
-            "I was sceptical. Tried it once — the result matched exactly what the Centre des Impôts confirmed. No more driving in just to find out the amount.",
+            "I was sceptical. Tried it once, the result matched exactly what the Centre des Impôts confirmed. No more driving in just to find out the amount.",
           name: "Fatima O.",
           role: "Grocery shop, Ngaoundéré",
           avatar: "F",
@@ -573,7 +573,7 @@ export const copy = {
     founderNote: {
       sectionLabel: "From the founder",
       h2: "Why I built Tassi",
-      quote: "I watched my uncle lose money every month — not because he mismanaged his shop, but because he couldn't keep up with his tax filings. Missed deadline. Wrong amount. Fine. I interviewed dozens of RSI business owners across Cameroon. The same problem, everywhere. I built Tassi so they'd finally have a tool as simple as WhatsApp.",
+      quote: "I watched my uncle lose money every month,not because he mismanaged his shop, but because he couldn't keep up with his tax filings. Missed deadline. Wrong amount. Fine. I interviewed dozens of RSI business owners across Cameroon. The same problem, everywhere. I built Tassi so they'd finally have a tool as simple as WhatsApp.",
       name: "Eileen Leila",
       role: "Founder & CEO, Tassi",
     },

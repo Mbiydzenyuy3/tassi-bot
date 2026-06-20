@@ -767,6 +767,9 @@ body {
 .w-11{
   width: 2.75rem;
 }
+.w-12{
+  width: 3rem;
+}
 .w-2{
   width: 0.5rem;
 }
@@ -1356,6 +1359,10 @@ body {
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
 }
+.py-16{
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
 .py-2{
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -1446,6 +1453,9 @@ body {
 .font-sans{
   font-family: Inter, system-ui, sans-serif;
 }
+.font-serif{
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
 .text-2xl{
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1457,6 +1467,10 @@ body {
 .text-4xl{
   font-size: 2.25rem;
   line-height: 2.5rem;
+}
+.text-7xl{
+  font-size: 4.5rem;
+  line-height: 1;
 }
 .text-\[10px\]{
   font-size: 10px;
@@ -1545,6 +1559,10 @@ body {
 .text-amber-700{
   --tw-text-opacity: 1;
   color: rgb(180 83 9 / var(--tw-text-opacity, 1));
+}
+.text-forest-200{
+  --tw-text-opacity: 1;
+  color: rgb(187 247 208 / var(--tw-text-opacity, 1));
 }
 .text-forest-500{
   --tw-text-opacity: 1;
@@ -1673,6 +1691,9 @@ body {
 }
 .opacity-\[0\.12\]{
   opacity: 0.12;
+}
+.opacity-\[0\.35\]{
+  opacity: 0.35;
 }
 .shadow-2xl{
   --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
@@ -2106,8 +2127,8 @@ body {
     height: 3rem;
   }
 
-  .xl\:h-16{
-    height: 4rem;
+  .xl\:h-14{
+    height: 3.5rem;
   }
 
   .xl\:h-20{
@@ -2132,6 +2153,10 @@ body {
 
   .xl\:w-12{
     width: 3rem;
+  }
+
+  .xl\:w-14{
+    width: 3.5rem;
   }
 
   .xl\:w-8{
@@ -2276,6 +2301,11 @@ body {
     padding-bottom: 2.5rem;
   }
 
+  .xl\:py-20{
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
   .xl\:py-28{
     padding-top: 7rem;
     padding-bottom: 7rem;
@@ -2342,6 +2372,11 @@ body {
     line-height: 1;
   }
 
+  .xl\:text-8xl{
+    font-size: 6rem;
+    line-height: 1;
+  }
+
   .xl\:text-\[10px\]{
     font-size: 10px;
   }
@@ -2386,12 +2421,16 @@ body {
     margin-bottom: 6rem;
   }
 
-  .\33xl\:h-20{
-    height: 5rem;
+  .\33xl\:h-16{
+    height: 4rem;
   }
 
   .\33xl\:h-24{
     height: 6rem;
+  }
+
+  .\33xl\:w-16{
+    width: 4rem;
   }
 
   .\33xl\:w-\[340px\]{
@@ -2488,6 +2527,11 @@ body {
     padding-bottom: 0.5rem;
   }
 
+  .\33xl\:py-28{
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+
   .\33xl\:py-3{
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
@@ -2524,6 +2568,11 @@ body {
   .\33xl\:text-2xl{
     font-size: 1.5rem;
     line-height: 2rem;
+  }
+
+  .\33xl\:text-4xl{
+    font-size: 2.25rem;
+    line-height: 2.5rem;
   }
 
   .\33xl\:text-5xl{
@@ -2578,8 +2627,8 @@ body {
     margin-bottom: 1.5rem;
   }
 
-  .\34xl\:h-28{
-    height: 7rem;
+  .\34xl\:h-24{
+    height: 6rem;
   }
 
   .\34xl\:h-32{
@@ -2596,6 +2645,10 @@ body {
 
   .\34xl\:max-w-11xl{
     max-width: 160rem;
+  }
+
+  .\34xl\:max-w-5xl{
+    max-width: 64rem;
   }
 
   .\34xl\:max-w-8xl{
@@ -2634,6 +2687,11 @@ body {
     padding-bottom: 5rem;
   }
 
+  .\34xl\:py-40{
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+  }
+
   .\34xl\:py-48{
     padding-top: 12rem;
     padding-bottom: 12rem;
@@ -2666,9 +2724,19 @@ body {
     padding-top: 12rem;
   }
 
+  .\34xl\:text-2xl{
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
   .\34xl\:text-3xl{
     font-size: 1.875rem;
     line-height: 2.25rem;
+  }
+
+  .\34xl\:text-5xl{
+    font-size: 3rem;
+    line-height: 1;
   }
 
   .\34xl\:text-6xl{
