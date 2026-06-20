@@ -49,17 +49,16 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
           aria-label="Tassi"
         >
           <Image
-            src="/image/logo/LOGO.png"
+            src="/image/logo/logo-cropped.png"
             alt="Tassi"
-            width={2000}
-            height={2000}
-            className="h-10 xl:h-12 3xl:h-16 4xl:h-20 w-auto"
-            style={{ mixBlendMode: "multiply" }}
+            width={752}
+            height={449}
+            className="h-12 xl:h-16 3xl:h-20 4xl:h-28 w-auto"
             priority
           />
-          <span className="hidden sm:block text-[8px] xl:text-[9px] 3xl:text-[11px] text-gray-400 -mt-2 font-medium tracking-wide pl-1">
+          {/* <span className="hidden sm:block text-[8px] xl:text-[9px] 3xl:text-[11px] text-gray-400 -mt-1 font-medium tracking-wide pl-0.5">
             {t.tagline}
-          </span>
+          </span> */}
         </Link>
 
         {/* Desktop nav */}

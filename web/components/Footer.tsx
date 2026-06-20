@@ -56,15 +56,13 @@ export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
           {/* Brand column */}
           <div>
             <div className="mb-4">
-              <div className="bg-white rounded-xl px-3 py-2 inline-block">
                 <Image
-                  src="/image/logo/LOGO.png"
-                  alt="Tassi"
-                  width={2000}
-                  height={2000}
-                  className="h-8 xl:h-10 3xl:h-12 4xl:h-16 w-auto"
-                />
-              </div>
+                src="/image/logo/TASSIWhite-cropped.png"
+                alt="Tassi"
+                width={751}
+                height={447}
+                className="h-12 xl:h-16 3xl:h-20 4xl:h-28 w-auto"
+              />
             </div>
             <p className="text-green-300 text-sm xl:text-base 3xl:text-lg leading-relaxed max-w-xs xl:max-w-sm mb-6">
               {t.tagline}
