@@ -13,16 +13,72 @@ const CheckIcon = () => (
   </svg>
 );
 
-function PhoneMockup() {
+function PhoneMockup({ isEn }: { isEn: boolean }) {
+  const lang = isEn ? "en" : "fr";
+  const content = {
+    fr: {
+      today: "AUJOURD'HUI",
+      greeting: "Bonjour ! Je suis Tassi 👋",
+      langChoice: "Choisissez votre langue :\n1️⃣ Français   2️⃣ English   3️⃣ Pidgin",
+      reply1: "1",
+      questionMonth: "Parfait 🇫🇷 Pour quel mois calculez-vous votre RSI ?",
+      replyMonth: "Décembre",
+      questionCA: "Quel est votre chiffre d'affaires de Décembre ?",
+      replyCA: "2 350 000 frs",
+      resultTitle: "📊 Calcul RSI — Décembre 2024",
+      ca: "CA déclaré :",
+      caVal: "2 350 000 XAF",
+      rsi: "Acompte RSI (5,5 %) :",
+      rsiVal: "129 250 XAF",
+      cac: "Part CAC (10 %) :",
+      cacVal: "12 925 XAF",
+      total: "Total à payer :",
+      totalVal: "142 175 XAF",
+      reminder: "✅ Déclarez avant le 15 janvier. Tapez AIDE pour toute question.",
+      online: "en ligne",
+      badge1: { top: "⚡ < 3 sec", sub: "résultat immédiat" },
+      badge2: { top: "Gratuit", sub: "sans inscription" },
+      badge3: { top: "RSI 2024", sub: "barème DGI" },
+    },
+    en: {
+      today: "TODAY",
+      greeting: "Hello! I'm Tassi 👋",
+      langChoice: "Choose your language:\n1️⃣ Français   2️⃣ English   3️⃣ Pidgin",
+      reply1: "2",
+      questionMonth: "Great 🇬🇧 Which month are you filing RSI for?",
+      replyMonth: "December",
+      questionCA: "What is your revenue for December?",
+      replyCA: "2,350,000 frs",
+      resultTitle: "📊 RSI Calculation — Dec 2024",
+      ca: "Revenue declared:",
+      caVal: "2,350,000 XAF",
+      rsi: "RSI acompte (5.5%):",
+      rsiVal: "129,250 XAF",
+      cac: "CAC portion (10%):",
+      cacVal: "12,925 XAF",
+      total: "Total due:",
+      totalVal: "142,175 XAF",
+      reminder: "✅ File before January 15. Type HELP for questions.",
+      online: "online",
+      badge1: { top: "⚡ < 3 sec", sub: "instant result" },
+      badge2: { top: "Free", sub: "no sign-up" },
+      badge3: { top: "RSI 2024", sub: "DGI rates" },
+    },
+  }[lang];
+
   return (
-    <div className="relative mx-auto mt-16" style={{ width: 260 }}>
+    <div
+      className="relative mx-auto w-[260px] xl:w-[300px] 3xl:w-[340px] 4xl:w-[440px]"
+      role="img"
+      aria-label={isEn ? "Tassi on WhatsApp — RSI calculation conversation" : "Aperçu de Tassi sur WhatsApp — conversation de calcul RSI"}
+    >
       <div
         className="absolute inset-0 rounded-full opacity-30 blur-3xl"
         style={{ background: "radial-gradient(circle, #4ade80, #16a34a)", transform: "scale(1.4) translateY(10%)" }}
       />
       <div
         className="relative mx-auto overflow-hidden shadow-2xl"
-        style={{ width: 248, height: 500, borderRadius: 44, background: "#1a1a2e", border: "6px solid #111" }}
+        style={{ width: "100%", aspectRatio: "248/500", borderRadius: 44, background: "#1a1a2e", border: "6px solid #111" }}
       >
         <div
           className="absolute left-1/2 -translate-x-1/2 bg-black z-10 flex items-center justify-center gap-1"
@@ -33,128 +89,170 @@ function PhoneMockup() {
         </div>
         <div className="absolute inset-0 flex flex-col">
           <div className="flex-shrink-0 pt-10">
-            <div className="flex items-center gap-2.5 px-4 py-2.5" style={{ background: "#075e54" }}>
+            <div className="flex items-center gap-2.5 px-4 py-2" style={{ background: "#075e54" }}>
               <svg className="w-4 h-4 text-white opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
               </svg>
               <div
                 className="flex-shrink-0 flex items-center justify-center rounded-full font-bold text-xs text-white"
-                style={{ width: 32, height: 32, background: "linear-gradient(135deg,#166534,#22c55e)" }}
+                style={{ width: 28, height: 28, background: "linear-gradient(135deg,#166534,#22c55e)" }}
               >
                 T
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white text-xs font-semibold leading-none">Tassi</p>
-                <p className="text-green-300 text-[9px] mt-0.5">en ligne</p>
+                <p className="text-green-300 text-[9px] mt-0.5">{content.online}</p>
               </div>
             </div>
-            <div className="flex items-center justify-center py-2" style={{ background: "#e5ddd5" }}>
+            <div className="flex items-center justify-center py-1.5" style={{ background: "#e5ddd5" }}>
               <span className="text-[8px] text-gray-500 px-2 py-0.5 rounded-full" style={{ background: "rgba(0,0,0,0.07)" }}>
-                AUJOURD&apos;HUI
+                {content.today}
               </span>
             </div>
           </div>
-          <div className="flex-1 px-2.5 py-2 space-y-2 overflow-hidden" style={{ background: "#e5ddd5" }}>
+
+          {/* Chat track — 8 messages, overflow-y-auto with scrollbar hidden */}
+          <div
+            className="flex-1 px-2 py-1.5 space-y-1.5 overflow-y-auto scrollbar-hide"
+            style={{ background: "#e5ddd5" }}
+          >
+            {/* 1 — Tassi greeting */}
             <div className="flex chat-msg">
-              <div className="max-w-[88%] px-2.5 py-2 shadow-sm" style={{ background: "white", borderRadius: "0 10px 10px 10px" }}>
-                <p className="text-gray-800 leading-relaxed" style={{ fontSize: 8 }}>
-                  Bonjour ! Je suis <strong>Tassi</strong>. Choisissez votre langue :
-                </p>
-                <p className="text-gray-700 mt-1" style={{ fontSize: 8 }}>1️⃣ Français &nbsp; 2️⃣ English &nbsp; 3️⃣ Pidgin</p>
-                <p className="text-gray-400 text-right mt-0.5" style={{ fontSize: 7 }}>09:03</p>
+              <div className="max-w-[88%] px-2 py-1.5 shadow-sm" style={{ background: "white", borderRadius: "0 8px 8px 8px" }}>
+                <p className="text-gray-800 font-medium" style={{ fontSize: 8 }}>{content.greeting}</p>
+                <p className="text-gray-600 mt-0.5 whitespace-pre-line leading-relaxed" style={{ fontSize: 7.5 }}>{content.langChoice}</p>
+                <p className="text-gray-400 text-right mt-0.5" style={{ fontSize: 6.5 }}>09:02</p>
               </div>
             </div>
+
+            {/* 2 — User picks language */}
             <div className="flex justify-end chat-msg">
-              <div className="px-2.5 py-1.5 shadow-sm" style={{ background: "#dcf8c6", borderRadius: "10px 10px 0 10px" }}>
-                <p className="text-gray-800" style={{ fontSize: 8 }}>1</p>
-                <p className="text-gray-400 text-right" style={{ fontSize: 7 }}>09:03 ✓✓</p>
+              <div className="px-2 py-1 shadow-sm" style={{ background: "#dcf8c6", borderRadius: "8px 8px 0 8px" }}>
+                <p className="text-gray-800" style={{ fontSize: 8 }}>{content.reply1}</p>
+                <p className="text-gray-400 text-right" style={{ fontSize: 6.5 }}>09:02 ✓✓</p>
               </div>
             </div>
+
+            {/* 3 — Tassi asks month */}
             <div className="flex chat-msg">
-              <div className="max-w-[80%] px-2.5 py-2 shadow-sm" style={{ background: "white", borderRadius: "0 10px 10px 10px" }}>
-                <p className="text-gray-800" style={{ fontSize: 8 }}>Quel est votre chiffre d&apos;affaires ce mois-ci ?</p>
-                <p className="text-gray-400 text-right mt-0.5" style={{ fontSize: 7 }}>09:04</p>
+              <div className="max-w-[88%] px-2 py-1.5 shadow-sm" style={{ background: "white", borderRadius: "0 8px 8px 8px" }}>
+                <p className="text-gray-800 leading-relaxed" style={{ fontSize: 7.5 }}>{content.questionMonth}</p>
+                <p className="text-gray-400 text-right mt-0.5" style={{ fontSize: 6.5 }}>09:02</p>
               </div>
             </div>
+
+            {/* 4 — User answers month */}
             <div className="flex justify-end chat-msg">
-              <div className="px-2.5 py-1.5 shadow-sm" style={{ background: "#dcf8c6", borderRadius: "10px 10px 0 10px" }}>
-                <p className="text-gray-800" style={{ fontSize: 8 }}>2 350 000 frs</p>
-                <p className="text-gray-400 text-right" style={{ fontSize: 7 }}>09:04 ✓✓</p>
+              <div className="px-2 py-1 shadow-sm" style={{ background: "#dcf8c6", borderRadius: "8px 8px 0 8px" }}>
+                <p className="text-gray-800" style={{ fontSize: 8 }}>{content.replyMonth}</p>
+                <p className="text-gray-400 text-right" style={{ fontSize: 6.5 }}>09:03 ✓✓</p>
               </div>
             </div>
+
+            {/* 5 — Tassi asks CA */}
             <div className="flex chat-msg">
-              <div className="max-w-[92%] shadow-sm" style={{ background: "white", borderRadius: "0 10px 10px 10px", overflow: "hidden" }}>
-                <div className="px-2.5 py-1.5" style={{ background: "#f0fdf4", borderBottom: "1px solid #dcfce7" }}>
-                  <p className="font-bold text-forest-800" style={{ fontSize: 8 }}>Calcul RSI</p>
+              <div className="max-w-[85%] px-2 py-1.5 shadow-sm" style={{ background: "white", borderRadius: "0 8px 8px 8px" }}>
+                <p className="text-gray-800" style={{ fontSize: 7.5 }}>{content.questionCA}</p>
+                <p className="text-gray-400 text-right mt-0.5" style={{ fontSize: 6.5 }}>09:03</p>
+              </div>
+            </div>
+
+            {/* 6 — User gives revenue */}
+            <div className="flex justify-end chat-msg">
+              <div className="px-2 py-1 shadow-sm" style={{ background: "#dcf8c6", borderRadius: "8px 8px 0 8px" }}>
+                <p className="text-gray-800" style={{ fontSize: 8 }}>{content.replyCA}</p>
+                <p className="text-gray-400 text-right" style={{ fontSize: 6.5 }}>09:03 ✓✓</p>
+              </div>
+            </div>
+
+            {/* 7 — Tassi result card */}
+            <div className="flex chat-msg">
+              <div className="max-w-[95%] shadow-sm" style={{ background: "white", borderRadius: "0 8px 8px 8px", overflow: "hidden" }}>
+                <div className="px-2 py-1" style={{ background: "#f0fdf4", borderBottom: "1px solid #dcfce7" }}>
+                  <p className="font-bold text-forest-800" style={{ fontSize: 7 }}>{content.resultTitle}</p>
                 </div>
-                <div className="px-2.5 py-1.5 space-y-0.5">
-                  <div className="flex justify-between">
-                    <p className="text-gray-500" style={{ fontSize: 7 }}>CA :</p>
-                    <p className="text-gray-700 font-medium" style={{ fontSize: 7 }}>2 350 000 XAF</p>
+                <div className="px-2 py-1 space-y-0.5">
+                  <div className="flex justify-between gap-2">
+                    <p className="text-gray-500" style={{ fontSize: 6.5 }}>{content.ca}</p>
+                    <p className="text-gray-700 font-medium" style={{ fontSize: 6.5 }}>{content.caVal}</p>
                   </div>
-                  <div className="flex justify-between">
-                    <p className="text-gray-500" style={{ fontSize: 7 }}>Acompte RSI (5,5 %) :</p>
-                    <p className="text-gray-700 font-medium" style={{ fontSize: 7 }}>129 250 XAF</p>
+                  <div className="flex justify-between gap-2">
+                    <p className="text-gray-500" style={{ fontSize: 6.5 }}>{content.rsi}</p>
+                    <p className="text-gray-700 font-medium" style={{ fontSize: 6.5 }}>{content.rsiVal}</p>
                   </div>
-                  <div className="flex justify-between pt-1 mt-1" style={{ borderTop: "1px solid #f0fdf4" }}>
-                    <p className="text-forest-700 font-bold" style={{ fontSize: 8 }}>Total :</p>
-                    <p className="text-forest-700 font-bold" style={{ fontSize: 8 }}>129 250 XAF</p>
+                  <div className="flex justify-between gap-2">
+                    <p className="text-gray-500" style={{ fontSize: 6.5 }}>{content.cac}</p>
+                    <p className="text-gray-700 font-medium" style={{ fontSize: 6.5 }}>{content.cacVal}</p>
+                  </div>
+                  <div className="flex justify-between gap-2 pt-1 mt-0.5" style={{ borderTop: "1px solid #dcfce7" }}>
+                    <p className="text-forest-700 font-bold" style={{ fontSize: 7.5 }}>{content.total}</p>
+                    <p className="text-forest-700 font-bold" style={{ fontSize: 7.5 }}>{content.totalVal}</p>
                   </div>
                 </div>
-                <p className="text-gray-400 text-right px-2.5 pb-1.5" style={{ fontSize: 7 }}>09:04</p>
+                <p className="text-gray-400 text-right px-2 pb-1" style={{ fontSize: 6.5 }}>09:04</p>
+              </div>
+            </div>
+
+            {/* 8 — Tassi deadline reminder */}
+            <div className="flex chat-msg">
+              <div className="max-w-[88%] px-2 py-1.5 shadow-sm" style={{ background: "white", borderRadius: "0 8px 8px 8px" }}>
+                <p className="text-gray-800 leading-relaxed" style={{ fontSize: 7.5 }}>{content.reminder}</p>
+                <p className="text-gray-400 text-right mt-0.5" style={{ fontSize: 6.5 }}>09:04</p>
               </div>
             </div>
           </div>
-          <div className="flex-shrink-0 flex items-center gap-2 px-2.5 py-2" style={{ background: "#f0f0f0" }}>
-            <div className="flex-1 flex items-center bg-white rounded-full px-3 py-1.5">
-              <p className="text-gray-400" style={{ fontSize: 8 }}>Message</p>
+
+          <div className="flex-shrink-0 flex items-center gap-2 px-2 py-1.5" style={{ background: "#f0f0f0" }}>
+            <div className="flex-1 flex items-center bg-white rounded-full px-2.5 py-1">
+              <p className="text-gray-400" style={{ fontSize: 7.5 }}>Message</p>
             </div>
-            <div className="flex-shrink-0 flex items-center justify-center rounded-full" style={{ width: 28, height: 28, background: "#075e54" }}>
-              <svg viewBox="0 0 24 24" fill="white" style={{ width: 13, height: 13 }}>
+            <div className="flex-shrink-0 flex items-center justify-center rounded-full" style={{ width: 26, height: 26, background: "#075e54" }}>
+              <svg viewBox="0 0 24 24" fill="white" style={{ width: 12, height: 12 }}>
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
             </div>
           </div>
         </div>
       </div>
-      <div className="absolute glass rounded-2xl px-3 py-2 shadow-xl animate-float" style={{ top: 80, right: -32, animationDelay: "0s" }}>
-        <p className="text-[10px] font-bold text-gray-700">⚡ &lt; 3 sec</p>
-        <p className="text-[8px] text-gray-400">résultat immédiat</p>
+      <div className="hidden sm:block absolute glass rounded-2xl px-3 py-2 shadow-xl animate-float" style={{ top: 80, right: -36, animationDelay: "0s" }}>
+        <p className="text-[10px] font-bold text-gray-700">{content.badge1.top}</p>
+        <p className="text-[8px] text-gray-400">{content.badge1.sub}</p>
       </div>
-      <div className="absolute glass rounded-2xl px-3 py-2 shadow-xl animate-float" style={{ bottom: 110, left: -32, animationDelay: "1.8s" }}>
-        <p className="text-[10px] font-bold text-gray-700">Gratuit</p>
-        <p className="text-[8px] text-gray-400">sans inscription</p>
+      <div className="hidden sm:block absolute glass rounded-2xl px-3 py-2 shadow-xl animate-float" style={{ bottom: 110, left: -36, animationDelay: "1.8s" }}>
+        <p className="text-[10px] font-bold text-gray-700">{content.badge2.top}</p>
+        <p className="text-[8px] text-gray-400">{content.badge2.sub}</p>
       </div>
-      <div className="absolute glass rounded-2xl px-3 py-2 shadow-xl animate-float" style={{ bottom: 200, right: -28, animationDelay: "0.9s" }}>
-        <p className="text-[10px] font-bold text-forest-700">RSI 2024</p>
-        <p className="text-[8px] text-gray-400">barème DGI</p>
+      <div className="hidden sm:block absolute glass rounded-2xl px-3 py-2 shadow-xl animate-float" style={{ bottom: 200, right: -32, animationDelay: "0.9s" }}>
+        <p className="text-[10px] font-bold text-forest-700">{content.badge3.top}</p>
+        <p className="text-[8px] text-gray-400">{content.badge3.sub}</p>
       </div>
     </div>
   );
 }
 
-export default function Hero({ t }: { t: Copy["hero"] }) {
+export default function Hero({ t, isEn }: { t: Copy["hero"]; isEn: boolean }) {
   return (
-    <section className="relative min-h-screen flex items-center pt-16 xl:pt-20 3xl:pt-24 pb-16 overflow-hidden">
-      <div className="absolute inset-0 bg-hero-gradient" />
+    <section className="relative min-h-screen flex items-center pt-24 xl:pt-28 3xl:pt-32 4xl:pt-48 pb-16 4xl:pb-28">
+      {/* Richer background with diagonal sweep */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(160deg, #f0fdf4 0%, #ffffff 40%, #fffbeb 100%)" }} />
       <div
-        className="absolute top-0 right-0 opacity-40"
-        style={{ width: 700, height: 700, background: "radial-gradient(circle at 70% 20%, #dcfce7 0%, transparent 70%)" }}
+        className="absolute top-0 right-0 opacity-50"
+        style={{ width: 900, height: 900, background: "radial-gradient(circle at 70% 10%, #bbf7d0 0%, transparent 60%)" }}
       />
       <div
-        className="absolute bottom-0 left-0 opacity-30"
-        style={{ width: 500, height: 500, background: "radial-gradient(circle at 30% 80%, #fef3c7 0%, transparent 70%)" }}
+        className="absolute bottom-0 left-0 opacity-25"
+        style={{ width: 600, height: 600, background: "radial-gradient(circle at 20% 90%, #fef3c7 0%, transparent 65%)" }}
       />
       <div
-        className="absolute inset-0 opacity-[0.025]"
+        className="absolute inset-0 opacity-[0.03]"
         style={{
           backgroundImage: "linear-gradient(#16a34a 1px, transparent 1px), linear-gradient(90deg, #16a34a 1px, transparent 1px)",
           backgroundSize: "48px 48px",
         }}
       />
 
-      <div className="relative w-full max-w-7xl 3xl:max-w-9xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12">
-        <div className="grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 xl:gap-20 3xl:gap-28 items-center">
+      <div className="relative w-full max-w-7xl 3xl:max-w-9xl 4xl:max-w-11xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28">
+        <div className="grid lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_420px] 3xl:grid-cols-[1fr_500px] 4xl:grid-cols-[1fr_660px] gap-10 lg:gap-16 xl:gap-20 3xl:gap-28 4xl:gap-48 items-center">
           <div className="animate-slide-up text-center lg:text-left max-w-2xl xl:max-w-3xl 3xl:max-w-4xl mx-auto lg:mx-0">
             <div className="inline-flex items-center gap-2 mb-6 rounded-full border border-forest-200 bg-forest-50 px-4 py-1.5 text-sm xl:text-base 3xl:text-lg font-medium text-forest-700">
               <span className="relative flex h-2 w-2">
@@ -164,15 +262,34 @@ export default function Hero({ t }: { t: Copy["hero"] }) {
               {t.badge}
             </div>
 
-            <h1 className="text-[46px] sm:text-6xl xl:text-7xl 3xl:text-8xl font-extrabold leading-[1.05] tracking-tight mb-5 xl:mb-7">
+            <h1 className="text-[40px] sm:text-5xl xl:text-6xl 3xl:text-7xl 3xl:text-[130px] font-extrabold leading-[1.05] tracking-tight mb-5 xl:mb-7 4xl:mb-10">
               <span className="text-gray-900">{t.h1a}</span>
               <br />
               <span className="gradient-text">{t.h1b}</span>
             </h1>
 
-            <p className="text-lg xl:text-xl 3xl:text-2xl text-gray-500 leading-relaxed mb-8 xl:mb-10 text-balance">
+            <p className="text-lg xl:text-xl 3xl:text-2xl 4xl:text-3xl text-gray-500 leading-relaxed mb-8 xl:mb-10 4xl:mb-14 text-balance">
               {t.sub}
             </p>
+
+            {/* Above-fold social proof */}
+            <div className="flex items-center gap-2 mb-6 xl:mb-8 justify-center lg:justify-start">
+              <div className="flex -space-x-1.5">
+                {["A", "E", "C", "F", "M"].map((l, i) => (
+                  <div
+                    key={i}
+                    className={`w-7 h-7 xl:w-8 xl:h-8 rounded-full border-2 border-white flex items-center justify-center text-white font-bold text-[10px] xl:text-xs flex-shrink-0 ${["bg-forest-700", "bg-gold-600", "bg-blue-600", "bg-teal-600", "bg-purple-600"][i]}`}
+                  >
+                    {l}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm xl:text-base text-gray-500">
+                <span className="font-semibold text-gray-700">⭐ 4.9</span>{" "}
+                <span className="text-gray-400">·</span>{" "}
+                {t.socialProof}
+              </p>
+            </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 xl:gap-4 justify-center lg:justify-start mb-8">
               <a
@@ -193,7 +310,7 @@ export default function Hero({ t }: { t: Copy["hero"] }) {
               >
                 {t.secondaryCta}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </a>
             </div>
@@ -209,9 +326,7 @@ export default function Hero({ t }: { t: Copy["hero"] }) {
           </div>
 
           <div className="flex justify-center lg:justify-end animate-fade-in">
-            <div className="scale-100 xl:scale-110 3xl:scale-[1.3] origin-center">
-              <PhoneMockup />
-            </div>
+            <PhoneMockup isEn={isEn} />
           </div>
         </div>
       </div>
