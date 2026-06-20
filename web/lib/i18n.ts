@@ -282,6 +282,13 @@ export const copy = {
       copy: "© 2026 Tassi. Tous droits réservés.",
       ratesNote: "Barème RSI selon le code DGI 2024",
     },
+    founderNote: {
+      sectionLabel: "De la fondatrice",
+      h2: "Pourquoi j'ai créé Tassi",
+      quote: "J'ai regardé mon oncle perdre de l'argent chaque mois — pas parce qu'il gérait mal son commerce, mais parce qu'il n'arrivait pas à suivre ses obligations fiscales. Date manquée. Montant mal calculé. Amende. J'ai interrogé des dizaines de commerçants RSI au Cameroun. Le même problème, partout. J'ai créé Tassi pour qu'ils aient enfin un outil aussi simple que WhatsApp.",
+      name: "Eileen Leila",
+      role: "Fondatrice & CEO, Tassi",
+    },
   },
   en: {
     nav: {
@@ -562,6 +569,13 @@ export const copy = {
       },
       copy: "© 2026 Tassi. All rights reserved.",
       ratesNote: "RSI rates from DGI 2024 schedule",
+    },
+    founderNote: {
+      sectionLabel: "From the founder",
+      h2: "Why I built Tassi",
+      quote: "I watched my uncle lose money every month — not because he mismanaged his shop, but because he couldn't keep up with his tax filings. Missed deadline. Wrong amount. Fine. I interviewed dozens of RSI business owners across Cameroon. The same problem, everywhere. I built Tassi so they'd finally have a tool as simple as WhatsApp.",
+      name: "Eileen Leila",
+      role: "Founder & CEO, Tassi",
     },
   },
 } as const;

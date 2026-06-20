@@ -8,6 +8,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Testimonial from "@/components/Testimonial";
 import Faq from "@/components/Faq";
 import Pricing from "@/components/Pricing";
+import FounderNote from "@/components/FounderNote";
 import CtaBanner from "@/components/CtaBanner";
 import Footer from "@/components/Footer";
 
@@ -34,6 +35,7 @@ export default async function LangPage({
       <Testimonial t={t.testimonials} />
       <Faq t={t.faq} />
       <Pricing t={t.pricing} />
+      <FounderNote t={t.founderNote} />
       <CtaBanner t={t.ctaBanner} />
       <Footer t={t.footer} lang={lang as Lang} />
     </main>
