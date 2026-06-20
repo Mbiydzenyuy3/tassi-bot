@@ -4,8 +4,6 @@ import uuid
 from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
-
 from tassi.config import Settings
 from tassi.reminders import (
     make_daily_reminder_job,
@@ -52,7 +50,7 @@ def _make_subscription(user_id: uuid.UUID | None = None, days_until_expiry: int 
     return s
 
 
-def _make_db(rows: list = None) -> AsyncMock:  # type: ignore[assignment]
+def _make_db(rows: list | None = None) -> AsyncMock:
     """Mock AsyncSession whose execute() returns `rows` as scalars."""
     db = AsyncMock()
     result = MagicMock()
@@ -134,6 +132,18 @@ class TestSendDay10Reminders:
 
         assert count == 1
         mock_send.assert_awaited_once()
+
+    async def test_day_10_flag_on_no_plus_users_does_not_commit(self) -> None:
+        """Flag is on but no Plus users remain to remind — covers if users: false branch."""
+        db = _make_db([])
+        cfg = _cfg(feature_plus_reminders=True)
+
+        with patch("tassi.reminders.send_text_message", new_callable=AsyncMock) as mock_send:
+            count = await send_day_10_reminders("2026-06", db, cfg)
+
+        assert count == 0
+        mock_send.assert_not_awaited()
+        db.commit.assert_not_awaited()
 
 
 # ── T13: renewal prompt sent 3 days before expiry ────────────────────────────
@@ -228,3 +238,57 @@ class TestDailyReminderJob:
             await job()
 
         mock_renewal.assert_awaited_once()
+
+    async def test_daily_job_sends_day14_on_day_14(self) -> None:
+        """When today is the 14th, send_day_14_reminders is called — covers line 192."""
+
+        class _FakeFactory:
+            def __call__(self) -> "_FakeFactory":
+                return self
+
+            async def __aenter__(self) -> AsyncMock:
+                return _make_db([])
+
+            async def __aexit__(self, *args: object) -> None:
+                pass
+
+        job = make_daily_reminder_job(_FakeFactory(), _cfg())
+        fake_now = datetime(2026, 6, 14, 3, 0, tzinfo=UTC)
+
+        with (
+            patch("tassi.reminders.datetime") as mock_dt,
+            patch("tassi.reminders.send_day_14_reminders", new_callable=AsyncMock) as mock_14,
+            patch("tassi.reminders.send_day_10_reminders", new_callable=AsyncMock),
+            patch("tassi.reminders.send_renewal_prompts", new_callable=AsyncMock),
+        ):
+            mock_dt.now.return_value = fake_now
+            await job()
+
+        mock_14.assert_awaited_once()
+
+    async def test_daily_job_sends_day10_on_day_10(self) -> None:
+        """When today is the 10th, send_day_10_reminders is called — covers line 194."""
+
+        class _FakeFactory:
+            def __call__(self) -> "_FakeFactory":
+                return self
+
+            async def __aenter__(self) -> AsyncMock:
+                return _make_db([])
+
+            async def __aexit__(self, *args: object) -> None:
+                pass
+
+        job = make_daily_reminder_job(_FakeFactory(), _cfg())
+        fake_now = datetime(2026, 6, 10, 3, 0, tzinfo=UTC)
+
+        with (
+            patch("tassi.reminders.datetime") as mock_dt,
+            patch("tassi.reminders.send_day_10_reminders", new_callable=AsyncMock) as mock_10,
+            patch("tassi.reminders.send_day_14_reminders", new_callable=AsyncMock),
+            patch("tassi.reminders.send_renewal_prompts", new_callable=AsyncMock),
+        ):
+            mock_dt.now.return_value = fake_now
+            await job()
+
+        mock_10.assert_awaited_once()
