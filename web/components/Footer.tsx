@@ -61,7 +61,7 @@ export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
                 alt="Tassi"
                 width={751}
                 height={447}
-                className="h-12 xl:h-16 3xl:h-20 4xl:h-28 w-auto"
+                className="h-10 xl:h-14 3xl:h-16 4xl:h-24 w-auto"
               />
             </div>
             <p className="text-green-300 text-sm xl:text-base 3xl:text-lg leading-relaxed max-w-xs xl:max-w-sm mb-6">

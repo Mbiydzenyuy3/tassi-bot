@@ -53,7 +53,7 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
             alt="Tassi"
             width={752}
             height={449}
-            className="h-12 xl:h-16 3xl:h-20 4xl:h-28 w-auto"
+            className="h-10 xl:h-14 3xl:h-16 4xl:h-24 w-auto"
             priority
           />
           {/* <span className="hidden sm:block text-[8px] xl:text-[9px] 3xl:text-[11px] text-gray-400 -mt-1 font-medium tracking-wide pl-0.5">
