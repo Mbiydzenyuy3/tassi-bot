@@ -37,49 +37,49 @@ export const copy = {
           tag: "Gratuit",
           title: "Calcul RSI en 3 secondes",
           description:
-            "Envoyez votre CA mensuel dans n'importe quel format. 2 350 000 frs, 2.350.000 ou 2350000. Tassi retourne votre acompte RSI, la part CAC et le total. En moins de 3 secondes.",
+            "Envoyez votre CA — recevez acompte RSI, part CAC et total DGI en moins de 3 secondes.",
         },
         {
           tag: "Gratuit",
           title: "Déclaration néant guidée",
           description:
-            "Pas de CA ce mois-ci. Tassi vous explique exactement ce qu'il faut déposer au Centre des Impôts pour une Déclaration Néant.",
+            "Pas de CA ce mois-ci ? Tassi vous explique exactement quoi déposer au Centre des Impôts.",
         },
         {
           tag: "Gratuit",
           title: "Disponible à toute heure",
           description:
-            "3h du matin avant une échéance. Un dimanche. Tassi répond. Pas d'heures de bureau, pas d'attente.",
+            "3h du matin avant le 15. Un dimanche. Tassi répond.",
         },
         {
           tag: "Gratuit",
           title: "Français, anglais et pidgin",
           description:
-            "Choisissez votre langue au départ ou changez-la en cours de conversation. Tassi s'adapte à chaque fois.",
+            "Commencez en français, passez au pidgin en cours de route — Tassi suit.",
         },
         {
           tag: "Plus",
           title: "Historique sur 12 mois",
           description:
-            "Tassi Plus enregistre chaque calcul. Fin d'année, tous vos mois en un seul message. 500 XAF par mois, payé via MTN MoMo ou Orange Money dans le chat.",
+            "Chaque calcul enregistré — en janvier, toute l'année en un message. 500 XAF/mois via MoMo ou Orange Money.",
         },
         {
           tag: "Plus",
           title: "Rappels avant le 15",
           description:
-            "Tassi Plus vous envoie un message WhatsApp avant la date limite chaque mois. Fini les amendes pour déclaration tardive.",
+            "Un message avant le 15 chaque mois. Fini les amendes pour retard.",
         },
         {
           tag: "Plus",
           title: "Historique des déclarations",
           description:
-            "Accédez à toutes vos déclarations des 12 derniers mois directement dans WhatsApp. Utile pour votre comptable ou votre bilan annuel.",
+            "Toutes vos déclarations des 12 derniers mois, directement dans WhatsApp.",
         },
         {
           tag: "Plus",
           title: "Alertes automatiques",
           description:
-            "Recevez un rappel WhatsApp le 1er et le 12 de chaque mois. Ne manquez plus jamais la date limite du 15.",
+            "Rappel le 1er et le 12 — ne manquez plus jamais le 15.",
         },
       ],
     },
@@ -256,15 +256,15 @@ export const copy = {
     },
     ctaBanner: {
       deadline: "Les déclarations RSI sont dues avant le 15 de chaque mois",
-      h2a: "Votre premier résultat :",
-      h2b: "30 secondes. Gratuit.",
-      sub: "Des PME à Douala, Yaoundé et Bafoussam calculent leur RSI avec Tassi chaque mois.",
+      h2a: "Le 15 ne vous attend pas.",
+      h2b: "Tassi, lui, est prêt.",
+      sub: "Rose avait eu deux amendes de retard. Depuis Tassi Plus — plus une seule.",
       social: "commerçants RSI en règle grâce à Tassi",
       cta: "Démarrer sur WhatsApp maintenant",
       sub2: "Gratuit. Sans inscription. Fonctionne sur WhatsApp.",
     },
     footer: {
-      tagline: "Votre impôt RSI calculé sur WhatsApp. En 3 secondes. Gratuit.",
+      tagline: "Plus jamais de doute sur votre montant RSI avant le 15.",
       product: "Produit",
       support: "Support",
       legal: "Légal",
@@ -319,49 +319,49 @@ export const copy = {
           tag: "Free",
           title: "RSI calculated in 3 seconds",
           description:
-            "Type your monthly revenue in any format. 2 350 000, 2,350,000, or just 2350000. Tassi sends back your RSI acompte, CAC share, and total due. Under 3 seconds.",
+            "Send your revenue — get your RSI acompte, CAC share, and total DGI due in under 3 seconds.",
         },
         {
           tag: "Free",
           title: "Zero-return filing",
           description:
-            "No revenue this month. Tassi walks you through exactly what to file at the Centre des Impôts for a Déclaration Néant.",
+            "No revenue this month? Tassi tells you exactly what to file at the Centre des Impôts.",
         },
         {
           tag: "Free",
           title: "Open whenever you need it",
           description:
-            "3am before a deadline. Sunday afternoon. Tassi responds. No office hours, no waiting.",
+            "3am before the 15th. A Sunday. Tassi responds.",
         },
         {
           tag: "Free",
           title: "French, English, or Pidgin",
           description:
-            "Pick your language at the start. Switch mid-conversation. Tassi follows along in whichever you choose.",
+            "Start in French, switch to Pidgin mid-conversation — Tassi keeps up.",
         },
         {
           tag: "Plus",
           title: "12 months of history",
           description:
-            "Tassi Plus saves every calculation. At year end, your full history is one message away. 500 XAF per month, paid via MTN MoMo or Orange Money in the chat.",
+            "Every calculation saved — in January, your whole year is one message away. 500 XAF/month via MoMo or Orange Money.",
         },
         {
           tag: "Plus",
           title: "Reminders before the 15th",
           description:
-            "Tassi Plus messages you before the deadline every month. No more late filing penalties.",
+            "A message before the 15th every month. No more late-filing fines.",
         },
         {
           tag: "Plus",
           title: "Declaration History",
           description:
-            "Access all your declarations from the last 12 months directly in WhatsApp. Useful for your accountant or annual audit.",
+            "All your declarations from the last 12 months, right inside WhatsApp.",
         },
         {
           tag: "Plus",
           title: "Automatic Reminders",
           description:
-            "Receive a WhatsApp reminder on the 1st and 12th of every month. Never miss the 15th deadline again.",
+            "Reminders on the 1st and 12th — never miss the 15th again.",
         },
       ],
     },
@@ -537,15 +537,15 @@ export const copy = {
     },
     ctaBanner: {
       deadline: "RSI declarations are due by the 15th of each month",
-      h2a: "Your first result:",
-      h2b: "30 seconds. Free.",
-      sub: "RSI businesses across Douala, Yaoundé and Bafoussam use Tassi every month.",
+      h2a: "The 15th won't wait.",
+      h2b: "Tassi already has your answer.",
+      sub: "Rose had two late-filing fines before Tassi Plus. Not one since.",
       social: "RSI business owners filing on time with Tassi",
       cta: "Start on WhatsApp now",
       sub2: "Free. No sign-up. Works on WhatsApp.",
     },
     footer: {
-      tagline: "Your RSI tax calculated on WhatsApp. In 3 seconds. Free.",
+      tagline: "Never wonder if you got the number right again.",
       product: "Product",
       support: "Support",
       legal: "Legal",
