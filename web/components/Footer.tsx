@@ -1,27 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { WHATSAPP_URL } from "@/lib/constants";
 import type { Copy, Lang } from "@/lib/i18n";
 
-function TassiLogo() {
-  return (
-    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Tassi logo">
-      {/* Outer arc */}
-      <path
-        d="M 31,6.14 A 16,16 0 1,0 31,33.86"
-        stroke="white"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
-      {/* Inner arc */}
-      <path
-        d="M 28,11.34 A 10,10 0 1,0 28,28.66"
-        stroke="white"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
   const dgiUrl = "https://www.impots.cm";
@@ -74,9 +55,16 @@ export default function Footer({ t, lang }: { t: Copy["footer"]; lang: Lang }) {
         <div className="grid md:grid-cols-[2fr_1fr_1fr_1fr] xl:grid-cols-[3fr_1fr_1fr_1fr] gap-10 md:gap-12 xl:gap-16 mb-12 xl:mb-16">
           {/* Brand column */}
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <TassiLogo />
-              <span className="font-bold text-white text-xl xl:text-2xl 3xl:text-3xl tracking-tight">Tassi</span>
+            <div className="mb-4">
+              <div className="bg-white rounded-xl px-3 py-2 inline-block">
+                <Image
+                  src="/image/logo/LOGO.png"
+                  alt="Tassi"
+                  width={2000}
+                  height={2000}
+                  className="h-8 xl:h-10 3xl:h-12 4xl:h-16 w-auto"
+                />
+              </div>
             </div>
             <p className="text-green-300 text-sm xl:text-base 3xl:text-lg leading-relaxed max-w-xs xl:max-w-sm mb-6">
               {t.tagline}

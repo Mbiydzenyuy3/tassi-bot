@@ -2,35 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { WHATSAPP_URL } from "@/lib/constants";
 import type { Copy, Lang } from "@/lib/i18n";
 
-/* ── Arc crescent logo mark (concentric C-shapes, Logo 4 style) ── */
-function TassiLogo() {
-  return (
-    <svg
-      className="w-10 h-10 3xl:w-12 3xl:h-12 4xl:w-16 4xl:h-16 flex-shrink-0"
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="Tassi logo"
-    >
-      {/*
-        Two concentric C-arcs opening to the right.
-        Circle center (23, 20). Each arc runs from 300° down through
-        270° (top) → 180° (left) → 90° (bottom) → 60°, tracing the
-        left three-quarters of each circle (240° sweep, large-arc=1, sweep=0).
-      */}
-      {/* Outer arc — r=16 */}
-      <path d="M 31,6.14 A 16,16 0 1,0 31,33.86"
-        stroke="#16a34a" strokeWidth="4" strokeLinecap="round" />
-      {/* Inner arc — r=10 */}
-      <path d="M 28,11.34 A 10,10 0 1,0 28,28.66"
-        stroke="#16a34a" strokeWidth="3.5" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 const WaIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 flex-shrink-0">
@@ -67,12 +43,23 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
     >
       <nav className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-11xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28 h-16 xl:h-20 3xl:h-24 4xl:h-32 flex items-center justify-between">
         {/* Logo */}
-        <Link href={`/${lang}`} className="flex items-center gap-0.5 3xl:gap-1 flex-shrink-0">
-          <TassiLogo />
-          <div className="flex flex-col leading-none">
-            <span className="font-bold text-gray-900 text-xl xl:text-2xl 3xl:text-3xl 4xl:text-4xl tracking-tight">Tassi</span>
-            <span className="hidden sm:block text-[9px] xl:text-[10px] 3xl:text-xs text-gray-400 mt-0.5 font-medium tracking-wide">Simplify Your Monthly Tax</span>
-          </div>
+        <Link
+          href={`/${lang}`}
+          className="flex flex-col items-start flex-shrink-0"
+          aria-label="Tassi"
+        >
+          <Image
+            src="/image/logo/LOGO.png"
+            alt="Tassi"
+            width={2000}
+            height={2000}
+            className="h-10 xl:h-12 3xl:h-16 4xl:h-20 w-auto"
+            style={{ mixBlendMode: "multiply" }}
+            priority
+          />
+          <span className="hidden sm:block text-[8px] xl:text-[9px] 3xl:text-[11px] text-gray-400 -mt-2 font-medium tracking-wide pl-1">
+            {t.tagline}
+          </span>
         </Link>
 
         {/* Desktop nav */}
