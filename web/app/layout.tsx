@@ -12,8 +12,8 @@ const icons: Metadata["icons"] = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "";
+  let pathname = "";
+  try { pathname = (await headers()).get("x-pathname") ?? ""; } catch {}
   const isEn = pathname.startsWith("/en");
 
   if (isEn) {
@@ -77,8 +77,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const h = await headers();
-  const pathname = h.get("x-pathname") ?? "";
+  let pathname = "";
+  try { pathname = (await headers()).get("x-pathname") ?? ""; } catch {}
   const lang = pathname.startsWith("/en") ? "en" : "fr";
 
   return (
