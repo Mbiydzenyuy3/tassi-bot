@@ -24,7 +24,7 @@ export default function Faq({ t }: { t: Copy["faq"] }) {
         }}
       />
 
-      <div className="max-w-3xl xl:max-w-4xl 3xl:max-w-5xl 4xl:max-w-7xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-20 relative">
+      <div className="max-w-4xl xl:max-w-5xl 3xl:max-w-6xl 4xl:max-w-8xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28 relative">
         <div className="text-center mb-12 xl:mb-16">
           <p className="text-sm xl:text-base font-bold uppercase tracking-widest text-forest-600 mb-3">
             {t.sectionLabel}
