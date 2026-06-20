@@ -82,7 +82,7 @@ function AnimatedStat({
       className="flex flex-col items-center justify-center py-8 xl:py-10 3xl:py-14 4xl:py-20 px-4 text-center"
     >
       <p
-        className="text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-7xl font-extrabold gradient-text leading-tight tabular-nums"
+        className="text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-7xl font-extrabold gradient-text-gold leading-tight tabular-nums"
         aria-label={value}
       >
         {prefix}

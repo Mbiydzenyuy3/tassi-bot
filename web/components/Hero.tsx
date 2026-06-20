@@ -254,16 +254,16 @@ export default function Hero({ t, isEn }: { t: Copy["hero"]; isEn: boolean }) {
       <div className="relative w-full max-w-7xl 3xl:max-w-9xl 4xl:max-w-11xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28">
         <div className="grid lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_420px] 3xl:grid-cols-[1fr_500px] 4xl:grid-cols-[1fr_660px] gap-10 lg:gap-16 xl:gap-20 3xl:gap-28 4xl:gap-48 items-center">
           <div className="animate-slide-up text-center lg:text-left max-w-2xl xl:max-w-3xl 3xl:max-w-4xl mx-auto lg:mx-0">
-            <div className="inline-flex items-center gap-2 mb-6 rounded-full border border-forest-200 bg-forest-50 px-4 py-1.5 text-sm xl:text-base 3xl:text-lg font-medium text-forest-700">
+            <div className="inline-flex items-center gap-2 mb-6 rounded-full border border-gold-300 bg-gold-50 px-4 py-1.5 text-sm xl:text-base 3xl:text-lg font-medium text-gold-700">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-forest-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-forest-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-500" />
               </span>
               {t.badge}
             </div>
 
             <h1 className="text-[40px] sm:text-5xl xl:text-6xl 3xl:text-[130px] font-extrabold leading-[1.05] tracking-tight mb-5 xl:mb-7 4xl:mb-10">
-              <span className="text-gray-900">{t.h1a}</span>
+              <span className="gradient-text-gold">{t.h1a}</span>
               <br />
               <span className="gradient-text">{t.h1b}</span>
             </h1>

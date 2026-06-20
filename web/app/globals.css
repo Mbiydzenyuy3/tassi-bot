@@ -156,9 +156,9 @@
   background: linear-gradient(
     105deg,
     #15803d 0%,
-    #16a34a 40%,
-    #22c55e 50%,
-    #16a34a 60%,
+    #16a34a 35%,
+    #d97706 50%,
+    #16a34a 65%,
     #15803d 100%
   );
   background-size: 200% auto;
