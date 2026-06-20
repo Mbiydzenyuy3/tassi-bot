@@ -20,7 +20,7 @@ export const copy = {
     },
     stats: [
       { value: "< 3s", label: "Temps de réponse" },
-      { value: "3", label: "fr · en · pidgin" },
+      { value: "3", label: "Langues supportées", pills: ["FR", "EN", "Pidgin"] as const },
       { value: "100 %", label: "Taux DGI exacts" },
       { value: "473", label: "déclarations ce mois" },
     ],
@@ -287,7 +287,7 @@ export const copy = {
     },
     stats: [
       { value: "< 3s", label: "Response time" },
-      { value: "3", label: "fr · en · pidgin" },
+      { value: "3", label: "Supported languages", pills: ["FR", "EN", "Pidgin"] as const },
       { value: "100 %", label: "Exact DGI rates" },
       { value: "473", label: "declarations this month" },
     ],
