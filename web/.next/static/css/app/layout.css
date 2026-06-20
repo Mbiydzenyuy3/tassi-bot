@@ -614,6 +614,9 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+.-mt-1{
+  margin-top: -0.25rem;
+}
 .mb-1{
   margin-bottom: 0.25rem;
 }
@@ -700,6 +703,9 @@ body {
 }
 .h-11{
   height: 2.75rem;
+}
+.h-12{
+  height: 3rem;
 }
 .h-16{
   height: 4rem;
@@ -800,6 +806,9 @@ body {
 .w-\[calc\(100\%_-_32px\)\]{
   width: calc(100% - 32px);
 }
+.w-auto{
+  width: auto;
+}
 .w-full{
   width: 100%;
 }
@@ -811,6 +820,9 @@ body {
 }
 .max-w-3xl{
   max-width: 48rem;
+}
+.max-w-4xl{
+  max-width: 56rem;
 }
 .max-w-5xl{
   max-width: 64rem;
@@ -1392,6 +1404,9 @@ body {
 .pb-6{
   padding-bottom: 1.5rem;
 }
+.pl-0\.5{
+  padding-left: 0.125rem;
+}
 .pt-1{
   padding-top: 0.25rem;
 }
@@ -1752,6 +1767,12 @@ body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+.gradient-text-gold {
+    background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 .glass {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
@@ -1824,9 +1845,9 @@ body {
   background: linear-gradient(
     105deg,
     #15803d 0%,
-    #16a34a 40%,
-    #22c55e 50%,
-    #16a34a 60%,
+    #16a34a 35%,
+    #d97706 50%,
+    #16a34a 65%,
     #15803d 100%
   );
   background-size: 200% auto;
@@ -2085,6 +2106,10 @@ body {
     height: 3rem;
   }
 
+  .xl\:h-16{
+    height: 4rem;
+  }
+
   .xl\:h-20{
     height: 5rem;
   }
@@ -2139,6 +2164,10 @@ body {
 
   .xl\:max-w-4xl{
     max-width: 56rem;
+  }
+
+  .xl\:max-w-5xl{
+    max-width: 64rem;
   }
 
   .xl\:max-w-6xl{
@@ -2293,11 +2322,6 @@ body {
     padding-top: 7rem;
   }
 
-  .xl\:text-2xl{
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-
   .xl\:text-3xl{
     font-size: 1.875rem;
     line-height: 2.25rem;
@@ -2324,6 +2348,10 @@ body {
 
   .xl\:text-\[15px\]{
     font-size: 15px;
+  }
+
+  .xl\:text-\[9px\]{
+    font-size: 9px;
   }
 
   .xl\:text-base{
@@ -2358,16 +2386,12 @@ body {
     margin-bottom: 6rem;
   }
 
-  .\33xl\:h-12{
-    height: 3rem;
+  .\33xl\:h-20{
+    height: 5rem;
   }
 
   .\33xl\:h-24{
     height: 6rem;
-  }
-
-  .\33xl\:w-12{
-    width: 3rem;
   }
 
   .\33xl\:w-\[340px\]{
@@ -2384,6 +2408,10 @@ body {
 
   .\33xl\:max-w-5xl{
     max-width: 64rem;
+  }
+
+  .\33xl\:max-w-6xl{
+    max-width: 72rem;
   }
 
   .\33xl\:max-w-8xl{
@@ -2406,10 +2434,6 @@ body {
     gap: 7rem;
   }
 
-  .\33xl\:gap-3{
-    gap: 0.75rem;
-  }
-
   .\33xl\:gap-4{
     gap: 1rem;
   }
@@ -2420,14 +2444,6 @@ body {
 
   .\33xl\:gap-8{
     gap: 2rem;
-  }
-
-  .\33xl\:gap-2{
-    gap: 0.5rem;
-  }
-
-  .\33xl\:gap-1{
-    gap: 0.25rem;
   }
 
   .\33xl\:p-10{
@@ -2510,11 +2526,6 @@ body {
     line-height: 2rem;
   }
 
-  .\33xl\:text-3xl{
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-  }
-
   .\33xl\:text-5xl{
     font-size: 3rem;
     line-height: 1;
@@ -2525,9 +2536,8 @@ body {
     line-height: 1;
   }
 
-  .\33xl\:text-7xl{
-    font-size: 4.5rem;
-    line-height: 1;
+  .\33xl\:text-\[11px\]{
+    font-size: 11px;
   }
 
   .\33xl\:text-\[130px\]{
@@ -2547,11 +2557,6 @@ body {
   .\33xl\:text-xl{
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .\33xl\:text-xs{
-    font-size: 0.75rem;
-    line-height: 1rem;
   }
 }
 
@@ -2573,16 +2578,12 @@ body {
     margin-bottom: 1.5rem;
   }
 
-  .\34xl\:h-16{
-    height: 4rem;
+  .\34xl\:h-28{
+    height: 7rem;
   }
 
   .\34xl\:h-32{
     height: 8rem;
-  }
-
-  .\34xl\:w-16{
-    width: 4rem;
   }
 
   .\34xl\:w-\[440px\]{
@@ -2595,10 +2596,6 @@ body {
 
   .\34xl\:max-w-11xl{
     max-width: 160rem;
-  }
-
-  .\34xl\:max-w-7xl{
-    max-width: 80rem;
   }
 
   .\34xl\:max-w-8xl{
@@ -2672,11 +2669,6 @@ body {
   .\34xl\:text-3xl{
     font-size: 1.875rem;
     line-height: 2.25rem;
-  }
-
-  .\34xl\:text-4xl{
-    font-size: 2.25rem;
-    line-height: 2.5rem;
   }
 
   .\34xl\:text-6xl{

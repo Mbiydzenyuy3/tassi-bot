@@ -82,7 +82,7 @@ function AnimatedStat({
       className="flex flex-col items-center justify-center py-8 xl:py-10 3xl:py-14 4xl:py-20 px-4 text-center"
     >
       <p
-        className="text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-7xl font-extrabold gradient-text leading-tight tabular-nums"
+        className="text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-7xl font-extrabold gradient-text-gold leading-tight tabular-nums"
         aria-label={value}
       >
         {prefix}
@@ -125,10 +125,10 @@ export default function StatsBar({ stats }: { stats: Copy["stats"] }) {
     <section
       className="relative bg-white"
       style={{
-        borderTop: "1px solid #f0fdf4",
-        borderBottom: "1px solid #f0fdf4",
-        background: "linear-gradient(180deg, #f9fffe 0%, #ffffff 60%)",
-        boxShadow: "inset 0 1px 0 #dcfce7, inset 0 -1px 0 #dcfce7",
+        borderTop: "1px solid #fef3c7",
+        borderBottom: "1px solid #fef3c7",
+        background: "linear-gradient(180deg, #fffbeb 0%, #ffffff 60%)",
+        boxShadow: "inset 0 1px 0 #fde68a, inset 0 -1px 0 #fde68a",
       }}
     >
       <div className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-11xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28">

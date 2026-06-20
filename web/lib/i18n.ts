@@ -7,12 +7,13 @@ export const copy = {
       howItWorks: "Comment ça marche",
       pricing: "Tarifs",
       cta: "Essayer gratuitement",
+      tagline: "Simplifiez votre impôt mensuel",
     },
     hero: {
       badge: "Pour les PME sous le Régime Simplifié d'Imposition (RSI)",
       h1a: "Le 15 du mois arrive.",
       h1b: "Tassi a votre RSI prêt.",
-      sub: "Envoyez votre chiffre d'affaires sur WhatsApp. Recevez votre acompte RSI (5,5 %), votre contribution CAC et le total à payer au Centre des Impôts. En 3 secondes. Gratuit.",
+      sub: "Envoyez votre CA sur WhatsApp — recevez votre RSI (5,5 %), CAC et total DGI en 3 secondes. Gratuit.",
       primaryCta: "Chat avec Tassi",
       secondaryCta: "Voir comment ça marche",
       trust: ["Aucun compte à créer", "Sans application", "24h/24, 7j/7", "Français, anglais, pidgin"],
@@ -193,7 +194,6 @@ export const copy = {
       h2b: "Plus pour l'historique.",
       sub: "Le calcul de base est gratuit pour toutes les entreprises RSI. L'historique et les rappels sont dans le plan Plus.",
       freeName: "Gratuit",
-      freePrice: "0",
       freeSub: "Toujours gratuit. Aucune carte bancaire.",
       freeCta: "Commencer sur WhatsApp",
       freeTier: [
@@ -224,8 +224,12 @@ export const copy = {
     },
     faq: {
       sectionLabel: "Questions fréquentes",
-      h2: "Ce que vous voulez savoir",
+      h2: "Tout ce qu'il faut savoir avant de commencer",
       items: [
+        {
+          q: "C'est vraiment gratuit ?",
+          a: "Oui. Le plan de base est gratuit sans limite de durée — aucune carte bancaire, aucune inscription. Envoyez votre CA, recevez vos chiffres RSI, CAC et total DGI, c'est tout. Tassi Plus (500 XAF/mois) débloque l'historique des déclarations et les rappels automatiques.",
+        },
         {
           q: "Est-ce que les calculs sont officiellement reconnus ?",
           a: "Oui. Tassi applique le barème officiel DGI : 5,5 % du CA mensuel pour l'acompte RSI, plus 10 % de ce montant pour la part CAC. Ce sont exactement les mêmes chiffres que votre Centre des Impôts vérifie.",
@@ -247,8 +251,8 @@ export const copy = {
           a: "Non. Envoyez simplement le montant du mois en cours. Tassi recalcule à chaque fois sans historique ni configuration préalable.",
         },
       ],
-      ctaLabel: "Vous avez d'autres questions ? Écrivez à Tassi",
-      ctaSub: "Tassi répond en moins d'une minute",
+      ctaLabel: "Posez votre question à Tassi",
+      ctaSub: "Sans inscription. Directement sur WhatsApp.",
     },
     ctaBanner: {
       deadline: "Les déclarations RSI sont dues avant le 15 de chaque mois",
@@ -260,8 +264,7 @@ export const copy = {
       sub2: "Gratuit. Sans inscription. Fonctionne sur WhatsApp.",
     },
     footer: {
-      tagline:
-        "Tassi calcule votre impôt RSI sur WhatsApp. Pour les entreprises sous le Régime Simplifié d'Imposition au Cameroun.",
+      tagline: "Votre impôt RSI calculé sur WhatsApp. En 3 secondes. Gratuit.",
       product: "Produit",
       support: "Support",
       legal: "Légal",
@@ -286,12 +289,13 @@ export const copy = {
       howItWorks: "How it works",
       pricing: "Pricing",
       cta: "Try for free",
+      tagline: "Simplify Your Monthly Tax",
     },
     hero: {
       badge: "For businesses under Cameroon's Simplified Tax Regime (RSI)",
       h1a: "The 15th is coming.",
       h1b: "Tassi has your RSI ready.",
-      sub: "Send your monthly revenue on WhatsApp. Get your RSI acompte (5.5%), CAC contribution, and total due at the Centre des Impôts in seconds. Free.",
+      sub: "Send your monthly revenue on WhatsApp — get your RSI (5.5%), CAC, and total DGI due in seconds. Free.",
       primaryCta: "Chat with Tassi",
       secondaryCta: "See how it works",
       trust: ["No account needed", "No app to install", "Available 24/7", "French, English, Pidgin"],
@@ -471,7 +475,6 @@ export const copy = {
       h2b: "Plus for history.",
       sub: "The core calculation is free for all RSI businesses. History and reminders are in the Plus plan.",
       freeName: "Free",
-      freePrice: "0",
       freeSub: "Always free. No credit card.",
       freeCta: "Start on WhatsApp",
       freeTier: [
@@ -502,8 +505,12 @@ export const copy = {
     },
     faq: {
       sectionLabel: "Common questions",
-      h2: "What you want to know",
+      h2: "Everything you need to know before you start",
       items: [
+        {
+          q: "Is it really free?",
+          a: "Yes. The basic plan is free with no time limit — no credit card, no account. Send your revenue, get your RSI, CAC, and total DGI figures. Done. Tassi Plus (500 XAF/month) unlocks declaration history and automatic reminders.",
+        },
         {
           q: "Are the calculations officially recognised?",
           a: "Yes. Tassi applies the official DGI rates: 5.5% of monthly revenue for the RSI acompte, plus 10% of that for the CAC share — the exact figures your Centre des Impôts checks.",
@@ -525,8 +532,8 @@ export const copy = {
           a: "Not at all. Just send this month's figure. Tassi recalculates from scratch every time — no history or setup needed.",
         },
       ],
-      ctaLabel: "Have more questions? Write to Tassi",
-      ctaSub: "Tassi replies in under a minute",
+      ctaLabel: "Ask Tassi your question",
+      ctaSub: "No account needed. Just WhatsApp.",
     },
     ctaBanner: {
       deadline: "RSI declarations are due by the 15th of each month",
@@ -538,8 +545,7 @@ export const copy = {
       sub2: "Free. No sign-up. Works on WhatsApp.",
     },
     footer: {
-      tagline:
-        "Tassi calculates your RSI tax on WhatsApp. For businesses under Cameroon's Simplified Tax Regime (RSI).",
+      tagline: "Your RSI tax calculated on WhatsApp. In 3 seconds. Free.",
       product: "Product",
       support: "Support",
       legal: "Legal",
