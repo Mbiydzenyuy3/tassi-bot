@@ -67,7 +67,7 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
     >
       <nav className="max-w-7xl 3xl:max-w-9xl 4xl:max-w-11xl mx-auto px-4 sm:px-6 xl:px-8 3xl:px-12 4xl:px-28 h-16 xl:h-20 3xl:h-24 4xl:h-32 flex items-center justify-between">
         {/* Logo */}
-        <Link href={`/${lang}`} className="flex items-center gap-2.5 3xl:gap-3 flex-shrink-0">
+        <Link href={`/${lang}`} className="flex items-center gap-0.5 3xl:gap-1 flex-shrink-0">
           <TassiLogo />
           <div className="flex flex-col leading-none">
             <span className="font-bold text-gray-900 text-xl xl:text-2xl 3xl:text-3xl 4xl:text-4xl tracking-tight">Tassi</span>
@@ -90,13 +90,14 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
 
         {/* Right controls */}
         <div className="hidden md:flex items-center gap-3 3xl:gap-4">
-          <Link
+          <a
             href={otherPath}
+            translate="no"
             className="inline-flex items-center gap-1.5 text-xs xl:text-sm font-semibold uppercase px-3 py-1.5 3xl:px-4 3xl:py-2 rounded-lg border border-gray-200 text-gray-500 hover:border-forest-300 hover:text-forest-700 transition-colors tracking-wider"
           >
             <span className="text-base leading-none">{otherLang === "en" ? "🇬🇧" : "🇫🇷"}</span>
             <span>{otherLang.toUpperCase()}</span>
-          </Link>
+          </a>
           <a
             href={WHATSAPP_URL}
             target="_blank"
@@ -141,12 +142,13 @@ export default function Nav({ t, lang }: { t: Copy["nav"]; lang: Lang }) {
             </Link>
           ))}
           <div className="flex gap-2 pt-2">
-            <Link
+            <a
               href={otherPath}
+              translate="no"
               className="flex-1 text-center py-3 rounded-xl border border-gray-200 text-sm font-bold uppercase text-gray-500"
             >
               {otherLang === "en" ? "🇬🇧 EN" : "🇫🇷 FR"}
-            </Link>
+            </a>
             <a
               href={WHATSAPP_URL}
               target="_blank"

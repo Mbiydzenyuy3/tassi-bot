@@ -82,10 +82,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = pathname.startsWith("/en") ? "en" : "fr";
 
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning translate="no">
       <body className="font-sans antialiased bg-white text-gray-900" suppressHydrationWarning>
         <a href="#main-content" className="skip-to-content">
-          Aller au contenu principal
+          {lang === "en" ? "Skip to main content" : "Aller au contenu principal"}
         </a>
         <div id="main-content">
           {children}

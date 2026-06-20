@@ -7,52 +7,68 @@ const WaIcon = () => (
   </svg>
 );
 
+const CheckChip = ({ label }: { label: string }) => (
+  <span className="inline-flex items-center gap-1.5 text-xs xl:text-sm text-forest-700 bg-forest-50 border border-forest-100 px-3 py-1.5 rounded-full font-medium">
+    <svg className="w-3 h-3 flex-shrink-0 text-forest-500" fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+    </svg>
+    {label}
+  </span>
+);
+
 export default function CtaBanner({ t }: { t: Copy["ctaBanner"] }) {
-  const avatarColors = [
-    "from-forest-600 to-forest-700",
-    "from-gold-500 to-gold-600",
-    "from-blue-600 to-indigo-700",
-    "from-purple-600 to-pink-600",
-    "from-teal-600 to-cyan-700",
-  ];
+  const isFr = t.deadline.startsWith("Les");
+
+  const chips = isFr
+    ? ["Résultat en < 3 secondes", "Barème DGI officiel 2024", "Sans inscription ni téléchargement"]
+    : ["Result in < 3 seconds", "Official DGI 2024 rates", "No sign-up or download"];
 
   return (
-    <section className="py-20 xl:py-28 3xl:py-36 4xl:py-48 bg-white relative overflow-hidden">
+    <section
+      className="py-20 xl:py-28 3xl:py-36 4xl:py-48 relative overflow-hidden"
+      style={{
+        background: "linear-gradient(160deg, #f0fdf4 0%, #ffffff 45%, #fffbeb 100%)",
+      }}
+    >
+      {/* Decorative radial glow — different from hero (centred, not top-right) */}
       <div
-        className="absolute inset-0 opacity-[0.07] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 80% 80% at 50% 50%, #16a34a, transparent)" }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-[0.12]"
+        style={{
+          width: 900,
+          height: 600,
+          background: "radial-gradient(ellipse at center, #16a34a, transparent 65%)",
+        }}
+      />
+      {/* Corner accent — top-right gold */}
+      <div
+        className="absolute top-0 right-0 pointer-events-none opacity-20"
+        style={{
+          width: 400,
+          height: 400,
+          background: "radial-gradient(circle at 80% 10%, #f59e0b, transparent 60%)",
+        }}
       />
 
-      <div className="max-w-3xl xl:max-w-4xl 3xl:max-w-5xl 4xl:max-w-7xl mx-auto px-4 sm:px-6 xl:px-8 text-center relative">
-        <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-2 rounded-full text-sm xl:text-base font-semibold mb-8">
+      <div className="max-w-3xl xl:max-w-4xl 3xl:max-w-5xl 4xl:max-w-8xl mx-auto px-4 sm:px-6 xl:px-8 4xl:px-20 text-center relative">
+
+        {/* Deadline chip */}
+        <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-2 rounded-full text-sm xl:text-base font-semibold mb-8 xl:mb-10">
           <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
           </svg>
           {t.deadline}
         </div>
 
-        <h2 className="text-4xl xl:text-5xl 3xl:text-6xl 4xl:text-7xl font-extrabold text-gray-900 leading-tight mb-5">
+        {/* Headline */}
+        <h2 className="text-4xl xl:text-5xl 3xl:text-6xl 4xl:text-7xl font-extrabold text-gray-900 leading-tight mb-5 xl:mb-6">
           {t.h2a} <span className="gradient-text">{t.h2b}</span>
         </h2>
 
-        <p className="text-lg xl:text-xl 3xl:text-2xl text-gray-500 mb-10 leading-relaxed">{t.sub}</p>
+        <p className="text-lg xl:text-xl 3xl:text-2xl text-gray-500 mb-10 xl:mb-12 leading-relaxed max-w-xl xl:max-w-2xl mx-auto">
+          {t.sub}
+        </p>
 
-        <div className="flex items-center justify-center gap-3 mb-10">
-          <div className="flex -space-x-2">
-            {["A", "E", "C", "M", "F"].map((letter, i) => (
-              <div
-                key={i}
-                className={`w-9 h-9 xl:w-11 xl:h-11 rounded-full border-2 border-white flex items-center justify-center font-bold text-sm xl:text-base text-white bg-gradient-to-br ${avatarColors[i]}`}
-              >
-                {letter}
-              </div>
-            ))}
-          </div>
-          <p className="text-sm xl:text-base text-gray-500 text-left">
-            <span className="font-semibold text-gray-700">500+</span> {t.social}
-          </p>
-        </div>
-
+        {/* CTA */}
         <a
           href={WHATSAPP_URL}
           target="_blank"
@@ -63,7 +79,18 @@ export default function CtaBanner({ t }: { t: Copy["ctaBanner"] }) {
           {t.cta}
         </a>
 
-        <p className="text-gray-400 text-sm xl:text-base mt-4">{t.sub2}</p>
+        {/* Trust chips — new format, never shown anywhere else on page */}
+        <div className="flex flex-wrap items-center justify-center gap-2 xl:gap-3 mt-8 xl:mt-10">
+          {chips.map((label) => (
+            <CheckChip key={label} label={label} />
+          ))}
+        </div>
+
+        {/* Social proof line — number only, no recycled avatars */}
+        <p className="text-gray-400 text-sm xl:text-base mt-5">
+          <span className="font-semibold text-gray-600">473</span>{" "}
+          {t.social}
+        </p>
       </div>
     </section>
   );

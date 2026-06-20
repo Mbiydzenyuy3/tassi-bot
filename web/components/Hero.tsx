@@ -262,7 +262,7 @@ export default function Hero({ t, isEn }: { t: Copy["hero"]; isEn: boolean }) {
               {t.badge}
             </div>
 
-            <h1 className="text-[40px] sm:text-5xl xl:text-6xl 3xl:text-7xl 3xl:text-[130px] font-extrabold leading-[1.05] tracking-tight mb-5 xl:mb-7 4xl:mb-10">
+            <h1 className="text-[40px] sm:text-5xl xl:text-6xl 3xl:text-[130px] font-extrabold leading-[1.05] tracking-tight mb-5 xl:mb-7 4xl:mb-10">
               <span className="text-gray-900">{t.h1a}</span>
               <br />
               <span className="gradient-text">{t.h1b}</span>

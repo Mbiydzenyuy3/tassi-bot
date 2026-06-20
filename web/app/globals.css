@@ -9,6 +9,41 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid #16a34a;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 9999;
+    padding: 0.5rem 1rem;
+    background: #166534;
+    color: white;
+    font-weight: 600;
+    border-radius: 0 0 8px 8px;
+    transition: top 0.15s;
+  }
+  .skip-to-content:focus {
+    top: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   *,
@@ -24,7 +59,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #15803d 0%, #16a34a 40%, #d97706 100%);
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 40%, #92400e 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -56,16 +91,24 @@
   }
 }
 
+/* Hide scrollbar cross-browser */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Chat bubble sequential animations */
 .chat-msg {
   opacity: 0;
   animation: chatIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-.chat-msg:nth-child(1) { animation-delay: 0.6s; }
-.chat-msg:nth-child(2) { animation-delay: 1.4s; }
-.chat-msg:nth-child(3) { animation-delay: 2.1s; }
-.chat-msg:nth-child(4) { animation-delay: 2.9s; }
-.chat-msg:nth-child(5) { animation-delay: 3.7s; }
+.chat-msg:nth-child(1) { animation-delay: 0.4s; }
+.chat-msg:nth-child(2) { animation-delay: 1.0s; }
+.chat-msg:nth-child(3) { animation-delay: 1.6s; }
+.chat-msg:nth-child(4) { animation-delay: 2.2s; }
+.chat-msg:nth-child(5) { animation-delay: 2.9s; }
+.chat-msg:nth-child(6) { animation-delay: 3.6s; }
+.chat-msg:nth-child(7) { animation-delay: 4.4s; }
+.chat-msg:nth-child(8) { animation-delay: 5.2s; }
 
 @keyframes chatIn {
   from {
