@@ -9,7 +9,7 @@ const WaIcon = () => (
 
 export default function HowItWorks({ t }: { t: Copy["howItWorks"] }) {
   return (
-    <section id="how-it-works" className="py-24 xl:py-32 3xl:py-40 4xl:py-52 bg-gray-50 relative overflow-hidden">
+    <section id="how-it-works" className="py-24 xl:py-32 3xl:py-40 4xl:py-52 bg-white relative overflow-hidden">
       <div
         className="absolute top-0 right-0 opacity-20 pointer-events-none"
         style={{ width: 600, height: 600, background: "radial-gradient(circle at 80% 20%, #dcfce7, transparent 70%)" }}
