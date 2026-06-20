@@ -41,7 +41,7 @@ export default function CtaBanner({ t }: { t: Copy["ctaBanner"] }) {
       />
       {/* Corner accent — top-right gold */}
       <div
-        className="absolute top-0 right-0 pointer-events-none opacity-20"
+        className="absolute top-0 right-0 pointer-events-none opacity-[0.35]"
         style={{
           width: 400,
           height: 400,
