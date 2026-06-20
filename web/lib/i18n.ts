@@ -68,6 +68,18 @@ export const copy = {
           description:
             "Tassi Plus vous envoie un message WhatsApp avant la date limite chaque mois. Fini les amendes pour déclaration tardive.",
         },
+        {
+          tag: "Plus",
+          title: "Historique des déclarations",
+          description:
+            "Accédez à toutes vos déclarations des 12 derniers mois directement dans WhatsApp. Utile pour votre comptable ou votre bilan annuel.",
+        },
+        {
+          tag: "Plus",
+          title: "Alertes automatiques",
+          description:
+            "Recevez un rappel WhatsApp le 1er et le 12 de chaque mois. Ne manquez plus jamais la date limite du 15.",
+        },
       ],
     },
     howItWorks: {
@@ -334,6 +346,18 @@ export const copy = {
           title: "Reminders before the 15th",
           description:
             "Tassi Plus messages you before the deadline every month. No more late filing penalties.",
+        },
+        {
+          tag: "Plus",
+          title: "Declaration History",
+          description:
+            "Access all your declarations from the last 12 months directly in WhatsApp. Useful for your accountant or annual audit.",
+        },
+        {
+          tag: "Plus",
+          title: "Automatic Reminders",
+          description:
+            "Receive a WhatsApp reminder on the 1st and 12th of every month. Never miss the 15th deadline again.",
         },
       ],
     },
