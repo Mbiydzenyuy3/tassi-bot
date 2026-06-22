@@ -11,7 +11,7 @@ import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
 
-from sqlalchemy import DateTime, ForeignKey, Index, Numeric, String, Uuid, func
+from sqlalchemy import DateTime, ForeignKey, Index, Numeric, String, Uuid, func, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from tassi.db import Base
@@ -47,6 +47,9 @@ class User(Base):
     )
     payment_transactions: Mapped[list["PaymentTransaction"]] = relationship(
         "PaymentTransaction", back_populates="user", lazy="raise"
+    )
+    reminders_sent: Mapped[list["ReminderSent"]] = relationship(
+        "ReminderSent", back_populates="user", lazy="raise"
     )
 
     @property
@@ -184,3 +187,57 @@ class PaymentTransaction(Base):
 
     def __repr__(self) -> str:
         return f"<PaymentTransaction id={self.id} status={self.status!r}>"
+
+
+class ReminderSent(Base):
+    """
+    Idempotency record for reminder messages.
+
+    day_14 / day_10 reminders: keyed on (user_id, reminder_type, fiscal_period).
+    renewal reminders: keyed on subscription_id.
+    """
+
+    __tablename__ = "reminders_sent"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("users.id"), nullable=False
+    )
+    # "day_14" | "day_10" | "renewal"
+    reminder_type: Mapped[str] = mapped_column(String(8), nullable=False)
+    # "YYYY-MM" — set for day_14/day_10; NULL for renewal
+    fiscal_period: Mapped[str | None] = mapped_column(String(7), nullable=True)
+    # FK to subscriptions — set for renewal; NULL for day_14/day_10
+    subscription_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("subscriptions.id"), nullable=True
+    )
+    sent_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    user: Mapped["User"] = relationship("User", back_populates="reminders_sent", lazy="raise")
+
+    __table_args__ = (
+        # Partial unique index: one day_14/day_10 send per (user, type, period)
+        Index(
+            "uq_reminders_sent_period",
+            "user_id",
+            "reminder_type",
+            "fiscal_period",
+            unique=True,
+            postgresql_where=text("fiscal_period IS NOT NULL"),
+        ),
+        # Partial unique index: one renewal send per subscription
+        Index(
+            "uq_reminders_sent_renewal",
+            "subscription_id",
+            unique=True,
+            postgresql_where=text("subscription_id IS NOT NULL"),
+        ),
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<ReminderSent id={self.id} type={self.reminder_type!r}"
+            f" period={self.fiscal_period!r}>"
+        )
