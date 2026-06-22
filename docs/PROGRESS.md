@@ -120,12 +120,16 @@
 
 | Task | Description | Branch | Status | Notes |
 |---|---|---|---|---|
-| 6.1 | APScheduler setup in FastAPI lifespan | `feat/reminders` | `[ ]` | |
-| 6.2 | `send_day_14_reminders()` | `feat/reminders` | `[ ]` | |
-| 6.3 | `send_day_10_reminders()` (feature-flagged off) | `feat/reminders` | `[ ]` | |
-| 6.4 | `send_renewal_prompts()` | `feat/reminders` | `[ ]` | |
-| 6.5 | `daily_reminder_job()` wrapper | `feat/reminders` | `[ ]` | |
-| 6.6 | `tests/test_reminders.py` — T11–T13 + idempotency tests | `feat/reminders` | `[ ]` | |
+| 6.1 | APScheduler setup in FastAPI lifespan | `feat/reminders` | `[x]` | `AsyncIOScheduler` wired into lifespan; cron at 03:00 daily via `make_daily_reminder_job` factory. Commit `2f9084a`. |
+| 6.2 | `send_day_14_reminders()` | `feat/reminders` | `[x]` | Queries users with a calc in the fiscal period not yet reminded; idempotent via `reminders_sent` EXISTS subquery. Commit `2f9084a`. |
+| 6.3 | `send_day_10_reminders()` (feature-flagged off) | `feat/reminders` | `[x]` | Returns 0 immediately when `feature_plus_reminders=False`; queries Plus (ACTIVE subscription) users otherwise. Flag off until G3. Commit `2f9084a`. |
+| 6.4 | `send_renewal_prompts()` | `feat/reminders` | `[x]` | Queries ACTIVE subscriptions expiring within 3 days; idempotent per `subscription_id`. Commit `2f9084a`. |
+| 6.5 | `daily_reminder_job()` wrapper | `feat/reminders` | `[x]` | Closure returned by `make_daily_reminder_job(db_factory, cfg)`; calls day_14 on 14th, day_10 on 10th, renewal every day; full try/except — never crashes scheduler. Commit `2f9084a`. |
+| 6.6 | `tests/test_reminders.py` — T11–T13 + idempotency tests | `feat/reminders` | `[x]` | 12 tests: T11 day_14 sent to filers, T12 day_10 flag-off no-send, T13 renewal 3 days before expiry, idempotency (calls twice → sends once), error handling (Meta API raises → job catches). Commit `fffaf56` (RED) + `2f9084a` (GREEN). |
+
+**Alembic:** `migrations/versions/0003_reminders_sent.py` — `reminders_sent` table with two partial unique indexes: `uq_reminders_sent_period` on `(user_id, reminder_type, fiscal_period) WHERE fiscal_period IS NOT NULL`; `uq_reminders_sent_renewal` on `(subscription_id) WHERE subscription_id IS NOT NULL`. Commit `11d9fd1`.
+
+**Milestone 6 total:** 271 tests · 100% branch coverage · Ruff + Black + mypy strict clean. Branch `feat/reminders` ready to merge to `development`. PR description provided — awaiting user merge.
 
 ---
 
