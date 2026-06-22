@@ -1,6 +1,7 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Request, Response
 from redis.asyncio import ConnectionPool, Redis
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,6 +11,7 @@ from tassi.config import Settings
 from tassi.db import build_engine, build_session_factory
 from tassi.deps import get_cfg, get_db, get_redis
 from tassi.payments import process_payment_callback
+from tassi.reminders import make_daily_reminder_job
 from tassi.security import verify_meta_signature
 from tassi.session import is_duplicate_message, is_rate_limited
 
@@ -29,7 +31,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.engine = engine
         app.state.db_factory = build_session_factory(engine)
         app.state.redis = Redis(connection_pool=pool)
+        scheduler = AsyncIOScheduler()
+        scheduler.add_job(
+            make_daily_reminder_job(app.state.db_factory, cfg),
+            "cron",
+            hour=3,
+            minute=0,
+        )
+        scheduler.start()
         yield
+        scheduler.shutdown()
         await app.state.redis.aclose()
         await engine.dispose()
 

@@ -4,7 +4,7 @@ import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
 
-from tassi.models import PaymentTransaction, Subscription, TaxCalculation, User
+from tassi.models import PaymentTransaction, ReminderSent, Subscription, TaxCalculation, User
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -268,3 +268,38 @@ class TestPaymentTransaction:
             status="PENDING",
         )
         assert isinstance(pt.amount_xaf, int)
+
+
+# ── ReminderSent ──────────────────────────────────────────────────────────────
+
+
+class TestReminderSent:
+    def test_repr_contains_type_and_period(self) -> None:
+        r = ReminderSent(
+            user_id=uuid.uuid4(),
+            reminder_type="day_14",
+            fiscal_period="2026-06",
+        )
+        assert "day_14" in repr(r)
+        assert "2026-06" in repr(r)
+
+    def test_reminder_type_column_max_length(self) -> None:
+        # "renewal" is 7 chars, "day_14" is 6 — column must be String(8) to hold all values
+        col = ReminderSent.__table__.c.reminder_type
+        assert col.type.length >= 7  # type: ignore[union-attr]
+
+    def test_fiscal_period_nullable(self) -> None:
+        col = ReminderSent.__table__.c.fiscal_period
+        assert col.nullable is True
+
+    def test_subscription_id_nullable(self) -> None:
+        col = ReminderSent.__table__.c.subscription_id
+        assert col.nullable is True
+
+    def test_period_unique_index_exists(self) -> None:
+        index_names = {idx.name for idx in ReminderSent.__table__.indexes}
+        assert "uq_reminders_sent_period" in index_names
+
+    def test_renewal_unique_index_exists(self) -> None:
+        index_names = {idx.name for idx in ReminderSent.__table__.indexes}
+        assert "uq_reminders_sent_renewal" in index_names

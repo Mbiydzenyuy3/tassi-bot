@@ -59,6 +59,9 @@ dmypy.json
 .DS_Store
 Thumbs.db
 
+# ── Next.js build output ─────────────────────────────────────────────────────
+web/.next/
+
 # ── Docker ────────────────────────────────────────────────────────────────────
 docker-volumes/
 
