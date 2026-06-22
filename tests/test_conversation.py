@@ -1080,3 +1080,63 @@ class TestHistoryCommand:
         assert len(sent) == 1
         assert "2026-05" in sent[0]
         assert "129" in sent[0]
+
+
+# ── FR-CHAT-8: mark-as-read + typing indicator ────────────────────────────────
+
+
+class TestFRChat8TypingIndicator:
+    """FR-CHAT-8: mark_as_read and send_typing_indicator called at start of handle_message."""
+
+    async def test_mark_as_read_and_typing_called_with_correct_args(self) -> None:
+        """Both functions are called with the correct arguments on a normal message."""
+        redis, fake_get, fake_set, _ = _fake_redis_for({"state": "ACTIVE", "language": "fr"})
+        db_factory = _make_db_factory()
+
+        async def fake_send(*a, **kw):  # type: ignore[no-untyped-def]
+            pass
+
+        mark_mock = AsyncMock()
+        typing_mock = AsyncMock()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+            patch("tassi.chat.mark_as_read", mark_mock),
+            patch("tassi.chat.send_typing_indicator", typing_mock),
+        ):
+            await handle_message(_MSISDN, "2350000", _MSG_ID, db_factory, redis, _CFG)
+
+        mark_mock.assert_awaited_once_with(
+            _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSG_ID
+        )
+        typing_mock.assert_awaited_once_with(
+            _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSISDN
+        )
+
+    async def test_handle_message_continues_if_mark_as_read_raises(self) -> None:
+        """If mark_as_read raises, handle_message still completes and sends a reply."""
+        redis, fake_get, fake_set, _ = _fake_redis_for({"state": "ACTIVE", "language": "fr"})
+        db_factory = _make_db_factory()
+
+        sent: list[str] = []
+
+        async def fake_send(*a, **kw):  # type: ignore[no-untyped-def]
+            sent.append(a[3] if len(a) > 3 else "")
+
+        async def failing_mark(*a, **kw):  # type: ignore[no-untyped-def]
+            raise RuntimeError("network error")
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+            patch("tassi.chat.mark_as_read", side_effect=failing_mark),
+            patch("tassi.chat.send_typing_indicator", AsyncMock()),
+        ):
+            await handle_message(_MSISDN, "2350000", _MSG_ID, db_factory, redis, _CFG)
+
+        # The bot must still have sent a reply despite the typing indicator failure
+        assert len(sent) == 1
+        assert "129" in sent[0]
