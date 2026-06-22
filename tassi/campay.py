@@ -11,13 +11,13 @@ import httpx
 
 _log = logging.getLogger(__name__)
 
-_CAMPAY_BASE = "https://campay.net/api"
+_CAMPAY_BASE_DEFAULT = "https://campay.net/api"
 
 
-async def _get_token(username: str, password: str) -> str:
+async def _get_token(username: str, password: str, *, base_url: str) -> str:
     async with httpx.AsyncClient() as client:
         resp = await client.post(
-            f"{_CAMPAY_BASE}/token/",
+            f"{base_url}/token/",
             json={"username": username, "password": password},
             timeout=10.0,
         )
@@ -33,6 +33,8 @@ async def initiate_ussd_push(
     msisdn: str,
     description: str,
     external_reference: str,
+    *,
+    base_url: str = _CAMPAY_BASE_DEFAULT,
 ) -> str:
     """
     Initiate a USSD push payment via Campay API.
@@ -40,10 +42,10 @@ async def initiate_ussd_push(
     Raises httpx.HTTPStatusError on failure.
     FR-PAY-2.
     """
-    token = await _get_token(username, password)
+    token = await _get_token(username, password, base_url=base_url)
     async with httpx.AsyncClient() as client:
         resp = await client.post(
-            f"{_CAMPAY_BASE}/collect/",
+            f"{base_url}/collect/",
             json={
                 "amount": str(amount),
                 "currency": "XAF",
@@ -66,6 +68,8 @@ async def initiate_ussd_push(
 async def get_transaction_status(
     application_token: str,
     campay_reference: str,
+    *,
+    base_url: str = _CAMPAY_BASE_DEFAULT,
 ) -> str:
     """
     Poll Campay for the status of a transaction.
@@ -74,7 +78,7 @@ async def get_transaction_status(
     """
     async with httpx.AsyncClient() as client:
         resp = await client.get(
-            f"{_CAMPAY_BASE}/transaction/{campay_reference}/",
+            f"{base_url}/transaction/{campay_reference}/",
             headers={"Authorization": f"Token {application_token}"},
             timeout=10.0,
         )

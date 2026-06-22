@@ -82,6 +82,46 @@ class TestInitiateUssdPush:
                 )
 
 
+class TestCustomBaseUrl:
+    async def test_initiate_ussd_push_uses_custom_base_url(self) -> None:
+        token_resp = _mock_response(200, {"token": "jwt-token"})
+        collect_resp = _mock_response(200, {"reference": _REFERENCE})
+        token_client = _mock_client(token_resp)
+        collect_client = _mock_client(collect_resp)
+
+        with patch(
+            "tassi.campay.httpx.AsyncClient",
+            side_effect=[token_client, collect_client],
+        ):
+            await initiate_ussd_push(
+                _USER,
+                _PASS,
+                _APP_TOKEN,
+                500,
+                _MSISDN,
+                "Tassi Plus",
+                "ext-001",
+                base_url="https://demo.campay.net/api",
+            )
+
+        call_url = token_client.post.call_args[0][0]
+        assert "demo.campay.net" in call_url
+
+    async def test_get_transaction_status_uses_custom_base_url(self) -> None:
+        resp = _mock_response(200, {"status": "SUCCESSFUL"})
+        client = _mock_client(resp)
+
+        with patch("tassi.campay.httpx.AsyncClient", return_value=client):
+            await get_transaction_status(
+                _APP_TOKEN,
+                _REFERENCE,
+                base_url="https://demo.campay.net/api",
+            )
+
+        call_url = client.get.call_args[0][0]
+        assert "demo.campay.net" in call_url
+
+
 class TestGetTransactionStatus:
     async def test_successful_normalised_to_success(self) -> None:
         resp = _mock_response(200, {"status": "SUCCESSFUL"})

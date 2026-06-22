@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     campay_username: str = Field("change-me")
     campay_password: str = Field("change-me")
     campay_application_token: str = Field("change-me")
+    # Demo: https://demo.campay.net/api  Production: https://campay.net/api
+    campay_base_url: str = Field("https://campay.net/api")
 
     # ── Tax engine (SRS NFR-MAINT-1, Validation Gates G1) ────────────────────
     # Stored as str so consuming code must explicitly cast to Decimal (never float)

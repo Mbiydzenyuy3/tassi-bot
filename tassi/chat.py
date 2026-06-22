@@ -406,6 +406,7 @@ async def _handle_awaiting_operator(
             msisdn,
             "Tassi Plus subscription",
             str(tx.id),
+            base_url=cfg.campay_base_url,
         )
         tx.campay_reference = reference
     except Exception:
@@ -450,7 +451,11 @@ async def _handle_status(
         await _send(msisdn, language, "payment_pending", cfg)
         return
 
-    polled = await get_transaction_status(cfg.campay_application_token, tx.campay_reference)
+    polled = await get_transaction_status(
+        cfg.campay_application_token,
+        tx.campay_reference,
+        base_url=cfg.campay_base_url,
+    )
     if polled in {"SUCCESS", "FAILED"}:
         await process_payment_callback(tx.campay_reference, polled, db, cfg)
     else:
