@@ -198,9 +198,11 @@ async def handle_message(
     # FR-CHAT-8: mark as read (blue ticks) then show typing indicator — best-effort
     try:
         await mark_as_read(cfg.meta_phone_number_id, cfg.meta_access_token, message_id)
-        await send_typing_indicator(cfg.meta_phone_number_id, cfg.meta_access_token, msisdn)
-    except Exception:
-        _log.debug("typing indicator failed — continuing")
+        await send_typing_indicator(
+            cfg.meta_phone_number_id, cfg.meta_access_token, msisdn, message_id
+        )
+    except Exception as exc:
+        _log.warning("read-receipt/typing-indicator failed: %s — continuing", exc, exc_info=True)
 
     async with db_factory() as db:
         session = await get_session(redis, msisdn)
