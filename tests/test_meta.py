@@ -66,25 +66,27 @@ class TestMarkAsRead:
                 await mark_as_read(_PHONE_ID, _TOKEN, _MSG_ID)
 
 
+_TYPING_MSG_ID = "wamid.test001"
+
+
 class TestSendTypingIndicator:
     async def test_sends_correct_payload(self) -> None:
         client = _mock_client(200)
         with patch("tassi.meta.httpx.AsyncClient", return_value=client):
-            await send_typing_indicator(_PHONE_ID, _TOKEN, _RECIPIENT)
+            await send_typing_indicator(_PHONE_ID, _TOKEN, _RECIPIENT, _TYPING_MSG_ID)
 
         client.post.assert_called_once()
         call_kwargs = client.post.call_args
-        assert call_kwargs.kwargs["json"] == {
-            "messaging_product": "whatsapp",
-            "recipient_type": "individual",
-            "to": _RECIPIENT,
-            "type": "typing_indicator",
-            "typing_indicator": {"type": "text"},
-        }
+        captured_payload = call_kwargs.kwargs["json"]
+        assert captured_payload["messaging_product"] == "whatsapp"
+        assert captured_payload["to"] == _RECIPIENT
+        assert captured_payload["message_id"] == _TYPING_MSG_ID
+        assert "typing_indicator" in captured_payload
+        assert "type" not in captured_payload
         assert call_kwargs.kwargs["headers"] == {"Authorization": f"Bearer {_TOKEN}"}
         assert "test-phone-id/messages" in call_kwargs.args[0]
 
     async def test_raises_on_non_2xx(self) -> None:
         with patch("tassi.meta.httpx.AsyncClient", return_value=_mock_client(500)):
             with pytest.raises(httpx.HTTPStatusError):
-                await send_typing_indicator(_PHONE_ID, _TOKEN, _RECIPIENT)
+                await send_typing_indicator(_PHONE_ID, _TOKEN, _RECIPIENT, _TYPING_MSG_ID)

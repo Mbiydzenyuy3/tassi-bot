@@ -1206,7 +1206,7 @@ class TestFRChat8TypingIndicator:
             _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSG_ID
         )
         typing_mock.assert_awaited_once_with(
-            _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSISDN
+            _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSISDN, _MSG_ID
         )
 
     async def test_handle_message_continues_if_mark_as_read_raises(self) -> None:

@@ -143,6 +143,36 @@ class TestReceiveWebhook:
         assert resp.status_code == 200
         mock_handle.assert_not_called()
 
+    def test_non_text_message_is_skipped(self, client: TestClient) -> None:
+        image_payload = {
+            "object": "whatsapp_business_account",
+            "entry": [
+                {
+                    "changes": [
+                        {
+                            "value": {
+                                "messages": [
+                                    {
+                                        "id": "wamid.img001",
+                                        "from": "237600000000",
+                                        "type": "image",
+                                        "image": {
+                                            "id": "img_123",
+                                            "mime_type": "image/jpeg",
+                                        },
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ],
+        }
+        with patch("tassi.main.handle_message", new_callable=AsyncMock) as mock_handle:
+            resp = self._post(client, image_payload)
+        assert resp.status_code == 200
+        mock_handle.assert_not_called()
+
 
 @pytest.fixture
 def campay_client(settings: Settings) -> TestClient:
