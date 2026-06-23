@@ -198,9 +198,11 @@ async def handle_message(
     # FR-CHAT-8: mark as read (blue ticks) then show typing indicator — best-effort
     try:
         await mark_as_read(cfg.meta_phone_number_id, cfg.meta_access_token, message_id)
-        await send_typing_indicator(cfg.meta_phone_number_id, cfg.meta_access_token, msisdn)
-    except Exception:
-        _log.debug("typing indicator failed — continuing")
+        await send_typing_indicator(
+            cfg.meta_phone_number_id, cfg.meta_access_token, msisdn, message_id
+        )
+    except Exception as exc:
+        _log.warning("read-receipt/typing-indicator failed: %s — continuing", exc, exc_info=True)
 
     async with db_factory() as db:
         session = await get_session(redis, msisdn)
@@ -208,7 +210,7 @@ async def handle_message(
         language = str(session.get("language", "fr"))
 
         if state == _NEW:
-            await _handle_new(msisdn, redis, cfg)
+            await _handle_new(msisdn, message_text, redis, cfg)
         elif state == _AWAITING_LANGUAGE:
             await _handle_awaiting_language(msisdn, message_text, session, redis, cfg)
         elif state == _AWAITING_BAND:
@@ -220,7 +222,7 @@ async def handle_message(
         else:
             _log.warning("unknown state %r for msisdn=%s — resetting", state, msisdn)
             await set_session(redis, msisdn, {})
-            await _handle_new(msisdn, redis, cfg)
+            await _handle_new(msisdn, message_text, redis, cfg)
 
 
 # ── State handlers ────────────────────────────────────────────────────────────
@@ -228,12 +230,15 @@ async def handle_message(
 
 async def _handle_new(
     msisdn: str,
+    message_text: str,
     redis: Redis,  # type: ignore[type-arg]
     cfg: Settings,
 ) -> None:
-    new_session: dict[str, object] = {"state": _AWAITING_LANGUAGE, "language": "fr"}
+    lang = _detect_language(message_text) if message_text.strip() else "fr"
+    new_session: dict[str, object] = {"state": _AWAITING_LANGUAGE, "language": lang}
     await set_session(redis, msisdn, new_session)
-    await _send(msisdn, "fr", "ask_language", cfg)
+    await _send(msisdn, lang, "welcome", cfg)  # message 1: greeting
+    await _send(msisdn, lang, "ask_language", cfg)  # message 2: picker
 
 
 async def _handle_awaiting_language(

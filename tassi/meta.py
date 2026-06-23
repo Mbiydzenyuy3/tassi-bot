@@ -4,7 +4,7 @@ import httpx
 
 _log = logging.getLogger(__name__)
 
-_META_API_URL = "https://graph.facebook.com/v19.0/{phone_number_id}/messages"
+_META_API_URL = "https://graph.facebook.com/v22.0/{phone_number_id}/messages"
 
 
 async def send_text_message(
@@ -66,10 +66,12 @@ async def send_typing_indicator(
     phone_number_id: str,
     access_token: str,
     recipient_msisdn: str,
+    message_id: str,
 ) -> None:
     """
     Show the three-dot typing animation to the recipient.
-    Uses the WhatsApp Cloud API typing_indicator message type.
+    Uses the WhatsApp Cloud API typing_indicator status operation (requires v21.0+).
+    message_id must be the wamid of the inbound message being replied to.
     Raises httpx.HTTPStatusError on non-2xx. Caller handles best-effort wrapping.
     """
     url = _META_API_URL.format(phone_number_id=phone_number_id)
@@ -77,7 +79,7 @@ async def send_typing_indicator(
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
         "to": recipient_msisdn,
-        "type": "typing_indicator",
+        "message_id": message_id,
         "typing_indicator": {"type": "text"},
     }
     async with httpx.AsyncClient() as client:
@@ -88,3 +90,4 @@ async def send_typing_indicator(
             timeout=10.0,
         )
         resp.raise_for_status()
+        _log.info("typing indicator sent to %s", recipient_msisdn)

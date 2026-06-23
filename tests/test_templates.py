@@ -46,3 +46,8 @@ class TestGetMessage:
         for lang in ("fr", "en", "pcm"):
             for key in MESSAGES[lang]:
                 assert MESSAGES[lang][key].strip(), f"{lang}/{key} is empty"
+
+    def test_welcome_key_in_all_languages(self) -> None:
+        for lang in ("fr", "en", "pcm"):
+            msg = get_message(lang, "welcome")
+            assert "Tassi" in msg

@@ -103,6 +103,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                         else message.get("text", "")
                     )
 
+                    if not message_text:
+                        continue  # skip non-text messages (images, voice notes, stickers)
+
                     if await is_rate_limited(redis, msisdn, cfg.rate_limit_per_60s):
                         continue
 

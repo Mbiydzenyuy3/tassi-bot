@@ -356,9 +356,103 @@ class TestOnboarding:
         ):
             await handle_message(_MSISDN, "hello", _MSG_ID, db_factory, redis, _CFG)
 
-        assert len(sent) == 1
-        assert "1️⃣" in sent[0]  # language picker
+        assert len(sent) == 2  # welcome + picker (was 1 before)
+        assert "1️⃣" not in sent[0]  # greeting has no picker items
+        assert "1️⃣" in sent[1]  # picker is the second message
         assert session_state["state"] == "AWAITING_LANGUAGE"
+
+    async def test_english_first_message_gets_english_welcome(self) -> None:
+        """If user's first message is English, welcome and picker are in English."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(
+                _MSISDN, "i want to calculate my revenue", _MSG_ID, db_factory, redis, _CFG
+            )
+
+        assert len(sent) == 2
+        assert "Welcome" in sent[0]  # English welcome
+        assert "Choose" in sent[1]  # English picker (not "Choisissez")
+        assert session_state["language"] == "en"
+
+    async def test_french_first_message_gets_french_welcome(self) -> None:
+        """If user's first message is French, welcome and picker are in French."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(
+                _MSISDN, "bonjour je veux calculer mes taxes", _MSG_ID, db_factory, redis, _CFG
+            )
+
+        assert len(sent) == 2
+        assert "Bienvenue" in sent[0]  # French welcome
+        assert "Choisissez" in sent[1]  # French picker
+        assert session_state["language"] == "fr"
+
+    async def test_unrecognized_first_message_defaults_to_french(self) -> None:
+        """First message with no language cues defaults to French."""
+        sent: list[str] = []
+
+        async def fake_send(phone_id, token, msisdn, text):  # type: ignore[no-untyped-def]
+            sent.append(text)
+
+        session_state: dict = {}
+
+        async def fake_get(redis, msisdn):  # type: ignore[no-untyped-def]
+            return dict(session_state)
+
+        async def fake_set(redis, msisdn, state):  # type: ignore[no-untyped-def]
+            session_state.update(state)
+
+        redis = AsyncMock()
+        db_factory = _make_db_factory()
+
+        with (
+            patch("tassi.chat.get_session", side_effect=fake_get),
+            patch("tassi.chat.set_session", side_effect=fake_set),
+            patch("tassi.chat.send_text_message", side_effect=fake_send),
+        ):
+            await handle_message(_MSISDN, "123", _MSG_ID, db_factory, redis, _CFG)
+
+        assert len(sent) == 2
+        assert "Bienvenue" in sent[0]
+        assert session_state["language"] == "fr"
 
     async def test_language_2_switches_to_english(self) -> None:
         sent: list[str] = []
@@ -1112,7 +1206,7 @@ class TestFRChat8TypingIndicator:
             _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSG_ID
         )
         typing_mock.assert_awaited_once_with(
-            _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSISDN
+            _CFG.meta_phone_number_id, _CFG.meta_access_token, _MSISDN, _MSG_ID
         )
 
     async def test_handle_message_continues_if_mark_as_read_raises(self) -> None:
