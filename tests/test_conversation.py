@@ -356,9 +356,9 @@ class TestOnboarding:
         ):
             await handle_message(_MSISDN, "hello", _MSG_ID, db_factory, redis, _CFG)
 
-        assert len(sent) == 2           # welcome + picker (was 1 before)
-        assert "1️⃣" not in sent[0]    # greeting has no picker items
-        assert "1️⃣" in sent[1]        # picker is the second message
+        assert len(sent) == 2  # welcome + picker (was 1 before)
+        assert "1️⃣" not in sent[0]  # greeting has no picker items
+        assert "1️⃣" in sent[1]  # picker is the second message
         assert session_state["state"] == "AWAITING_LANGUAGE"
 
     async def test_english_first_message_gets_english_welcome(self) -> None:
@@ -384,11 +384,13 @@ class TestOnboarding:
             patch("tassi.chat.set_session", side_effect=fake_set),
             patch("tassi.chat.send_text_message", side_effect=fake_send),
         ):
-            await handle_message(_MSISDN, "i want to calculate my revenue", _MSG_ID, db_factory, redis, _CFG)
+            await handle_message(
+                _MSISDN, "i want to calculate my revenue", _MSG_ID, db_factory, redis, _CFG
+            )
 
         assert len(sent) == 2
-        assert "Welcome" in sent[0]       # English welcome
-        assert "Choose" in sent[1]        # English picker (not "Choisissez")
+        assert "Welcome" in sent[0]  # English welcome
+        assert "Choose" in sent[1]  # English picker (not "Choisissez")
         assert session_state["language"] == "en"
 
     async def test_french_first_message_gets_french_welcome(self) -> None:
@@ -414,11 +416,13 @@ class TestOnboarding:
             patch("tassi.chat.set_session", side_effect=fake_set),
             patch("tassi.chat.send_text_message", side_effect=fake_send),
         ):
-            await handle_message(_MSISDN, "bonjour je veux calculer mes taxes", _MSG_ID, db_factory, redis, _CFG)
+            await handle_message(
+                _MSISDN, "bonjour je veux calculer mes taxes", _MSG_ID, db_factory, redis, _CFG
+            )
 
         assert len(sent) == 2
-        assert "Bienvenue" in sent[0]     # French welcome
-        assert "Choisissez" in sent[1]    # French picker
+        assert "Bienvenue" in sent[0]  # French welcome
+        assert "Choisissez" in sent[1]  # French picker
         assert session_state["language"] == "fr"
 
     async def test_unrecognized_first_message_defaults_to_french(self) -> None:

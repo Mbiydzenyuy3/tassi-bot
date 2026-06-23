@@ -8,8 +8,8 @@ from typing import Final
 
 MESSAGES: Final[dict[str, dict[str, str]]] = {
     "fr": {
+        "welcome": "👋 Bienvenue sur *Tassi*, votre assistant fiscal RSI.",
         "ask_language": (
-            "👋 Bienvenue sur *Tassi* — votre assistant fiscal RSI.\n\n"
             "Choisissez votre langue / Choose your language / Choisir langue:\n"
             "1️⃣ Français\n"
             "2️⃣ English\n"
@@ -90,8 +90,8 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
         "history_result": "{history_text}",
     },
     "en": {
+        "welcome": "👋 Welcome to *Tassi* — your RSI tax assistant.",
         "ask_language": (
-            "👋 Welcome to *Tassi* — your RSI tax assistant.\n\n"
             "Choose your language / Choisissez votre langue / Choisir langue:\n"
             "1️⃣ Français\n"
             "2️⃣ English\n"
@@ -164,9 +164,9 @@ MESSAGES: Final[dict[str, dict[str, str]]] = {
         "history_result": "{history_text}",
     },
     "pcm": {
+        "welcome": "👋 Welcome for *Tassi* — e go help you calculate your RSI tax.",
         "ask_language": (
-            "👋 Welcome for *Tassi* — e go help you calculate your RSI tax.\n\n"
-            "Pick your language / Choisissez votre langue:\n"
+            "Pick your language / Choisissez votre langue / Choisir langue:\n"
             "1️⃣ Français\n"
             "2️⃣ English\n"
             "3️⃣ Pidgin"
