@@ -19,7 +19,7 @@ from sqlalchemy.orm import selectinload
 
 from tassi.campay import get_transaction_status, initiate_ussd_push
 from tassi.config import Settings
-from tassi.meta import send_text_message
+from tassi.meta import mark_as_read, send_text_message, send_typing_indicator
 from tassi.models import PaymentTransaction, TaxCalculation, User
 from tassi.payments import process_payment_callback
 from tassi.session import get_session, set_session
@@ -185,7 +185,7 @@ def _detect_language(text: str) -> str:
 async def handle_message(
     msisdn: str,
     message_text: str,
-    _message_id: str,
+    message_id: str,
     db_factory: async_sessionmaker[AsyncSession],
     redis: Redis,  # type: ignore[type-arg]
     cfg: Settings,
@@ -195,6 +195,13 @@ async def handle_message(
     Creates its own DB session — the request-scoped session is already closed
     by the time BackgroundTasks executes.
     """
+    # FR-CHAT-8: mark as read (blue ticks) then show typing indicator — best-effort
+    try:
+        await mark_as_read(cfg.meta_phone_number_id, cfg.meta_access_token, message_id)
+        await send_typing_indicator(cfg.meta_phone_number_id, cfg.meta_access_token, msisdn)
+    except Exception:
+        _log.debug("typing indicator failed — continuing")
+
     async with db_factory() as db:
         session = await get_session(redis, msisdn)
         state = str(session.get("state", _NEW))
